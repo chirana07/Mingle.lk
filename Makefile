@@ -1,4 +1,4 @@
-.PHONY: help setup dev-backend dev-frontend seed test docker-up docker-down
+.PHONY: help setup dev-backend dev-frontend seed test docker-up docker-down mobile-sync ios android
 
 help:
 	@echo "Available commands:"
@@ -9,6 +9,9 @@ help:
 	@echo "  make test          - Run full backend test suite"
 	@echo "  make docker-up     - Start all services (PostgreSQL, Backend, Frontend) with Docker"
 	@echo "  make docker-down   - Stop Docker containers"
+	@echo "  make mobile-sync   - Build web bundle and sync native iOS & Android assets"
+	@echo "  make ios           - Open native iOS Xcode workspace"
+	@echo "  make android       - Open native Android Studio project"
 
 setup:
 	./setup.sh
@@ -30,3 +33,12 @@ docker-up:
 
 docker-down:
 	docker compose down
+
+mobile-sync:
+	cd frontend && npm run build:mobile
+
+ios:
+	cd frontend && npx cap open ios
+
+android:
+	cd frontend && npx cap open android
