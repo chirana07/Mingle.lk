@@ -2,6 +2,8 @@
 
 This document outlines our technical milestones, feature roadmap, and team task divisions.
 
+> 🎯 **Fundraising Target**: Track our **[Investor Readiness & Fundraising Playbook (INVESTOR_READINESS.md)](file:///Users/chirana/IdeaProjects/Mingle.lk/INVESTOR_READINESS.md)** and the **[GitHub Milestone: Pre-Seed MVP](https://github.com/chirana07/Mingle.lk/milestone/1)**!
+
 ---
 
 ## 👥 Suggested Team Task Division

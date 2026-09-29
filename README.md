@@ -9,7 +9,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0+-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 
-> 👥 **Working on this project as a team?** Read our **[Contributing Guide (CONTRIBUTING.md)](file:///Users/chirana/IdeaProjects/Mingle.lk/CONTRIBUTING.md)** and check the **[Sprint Roadmap (ROADMAP.md)](file:///Users/chirana/IdeaProjects/Mingle.lk/ROADMAP.md)**!
+> 👥 **Team & Collaborators**: Read our **[Contributing Guide (CONTRIBUTING.md)](file:///Users/chirana/IdeaProjects/Mingle.lk/CONTRIBUTING.md)** and **[Sprint Roadmap (ROADMAP.md)](file:///Users/chirana/IdeaProjects/Mingle.lk/ROADMAP.md)**.  
+> 💼 **Fundraising & Pitch Strategy**: Explore our **[Investor Readiness Playbook (INVESTOR_READINESS.md)](file:///Users/chirana/IdeaProjects/Mingle.lk/INVESTOR_READINESS.md)** and the **[Pre-Seed Milestone](https://github.com/chirana07/Mingle.lk/milestone/1)**!
 
 ---
 
