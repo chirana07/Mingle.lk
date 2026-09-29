@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { DiscoveryProfileItem, UserProfile } from "@/lib/types";
 import {
   MapPin,
@@ -93,10 +95,13 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
         intro_note: introNote.trim() || undefined,
       });
       setSentSuccessId(activeProfile.profile.user_id);
+      toast.success(`Connection request sent to ${activeProfile.profile.first_name}!`, {
+        description: "They will see your opening note and profile.",
+      });
       setActiveProfile(null);
       setIntroNote("");
     } catch (e: any) {
-      alert(e.message || "Failed to send connection request.");
+      toast.error(e.message || "Failed to send connection request.");
     } finally {
       setIsSubmitting(false);
     }
@@ -184,14 +189,17 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
         </div>
       ) : (
         <div className="space-y-6">
-          {profiles.map((item) => {
+          {profiles.map((item, idx) => {
             const p = item.profile;
             const primaryPhoto = p.photos.find((ph) => ph.is_primary)?.url || p.photos[0]?.url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80";
             const isAlreadySent = sentSuccessId === p.user_id;
 
             return (
-              <div
+              <motion.div
                 key={p.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: idx * 0.05 }}
                 className="bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden shadow-xl hover:border-slate-700/80 transition-all duration-300"
               >
                 {/* Profile Hero Image & Basic Overlay */}
@@ -397,7 +405,7 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

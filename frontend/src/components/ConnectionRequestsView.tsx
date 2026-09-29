@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import confetti from "canvas-confetti";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { ConnectionRequestItem } from "@/lib/types";
 import { UserCheck, X, Sparkles, MapPin, Check, HeartHandshake, ShieldCheck } from "lucide-react";
 
@@ -26,8 +29,18 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
       const matchId = await onAccept(req.id);
       setAcceptedMatchId(matchId);
       setAcceptedSenderName(req.sender_profile?.first_name || "your new connection");
+      // Fire celebratory confetti!
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ["#F43F5E", "#F59E0B", "#10B981", "#38BDF8"],
+      });
+      toast.success("Mutual Connection Established!", {
+        description: `You and ${req.sender_profile?.first_name || "your match"} can now message freely.`,
+      });
     } catch (e: any) {
-      alert(e.message || "Failed to accept connection.");
+      toast.error(e.message || "Failed to accept connection.");
     } finally {
       setIsProcessing(null);
     }
@@ -128,7 +141,12 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
       {/* Match Celebration Screen */}
       {acceptedMatchId && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-rose-500/40 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl animate-fade-in">
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", damping: 18 }}
+            className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-rose-500/40 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl animate-fade-in"
+          >
             <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-rose-900/40">
               <Sparkles className="w-8 h-8 text-white animate-pulse" />
             </div>
@@ -156,7 +174,7 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
                 Keep Browsing Requests
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
     </div>

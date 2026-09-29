@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Locale, getTranslation } from "@/i18n";
 import { api } from "@/lib/api";
 import {
@@ -409,68 +410,79 @@ export default function Home() {
 
         {/* Main Body Content based on Active Tab */}
         <div className="flex-1 overflow-y-auto">
-          {currentTab === "discover" && (
-            <DiscoveryFeed
-              profiles={discoveryProfiles}
-              isLoading={isLoadingFeed}
-              onSendConnection={handleSendConnection}
-              selectedCity={selectedCity}
-              onCityChange={handleCityChange}
-              selectedIntent={selectedIntent}
-              onIntentChange={handleIntentChange}
-              onRefresh={loadAllAppData}
-            />
-          )}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.16 }}
+              className="min-h-full"
+            >
+              {currentTab === "discover" && (
+                <DiscoveryFeed
+                  profiles={discoveryProfiles}
+                  isLoading={isLoadingFeed}
+                  onSendConnection={handleSendConnection}
+                  selectedCity={selectedCity}
+                  onCityChange={handleCityChange}
+                  selectedIntent={selectedIntent}
+                  onIntentChange={handleIntentChange}
+                  onRefresh={loadAllAppData}
+                />
+              )}
 
-          {currentTab === "requests" && (
-            <ConnectionRequestsView
-              requests={requests}
-              onAccept={handleAcceptRequest}
-              onOpenMatchChat={(matchId) => {
-                const conv = conversations.find((c) => c.match_id === matchId);
-                if (conv) {
-                  setCurrentTab("chat");
-                  handleSelectConversation(conv.id);
-                }
-              }}
-            />
-          )}
+              {currentTab === "requests" && (
+                <ConnectionRequestsView
+                  requests={requests}
+                  onAccept={handleAcceptRequest}
+                  onOpenMatchChat={(matchId) => {
+                    const conv = conversations.find((c) => c.match_id === matchId);
+                    if (conv) {
+                      setCurrentTab("chat");
+                      handleSelectConversation(conv.id);
+                    }
+                  }}
+                />
+              )}
 
-          {currentTab === "chat" && (
-            <MatchesAndChatView
-              matches={matches}
-              conversations={conversations}
-              activeConversationId={activeConversationId}
-              onSelectConversation={handleSelectConversation}
-              onSendMessage={handleSendMessage}
-              currentMessages={currentMessages}
-              onOpenDatePlan={handleOpenDatePlan}
-              onReportUser={handleReportUser}
-              onBlockUser={handleBlockUser}
-            />
-          )}
+              {currentTab === "chat" && (
+                <MatchesAndChatView
+                  matches={matches}
+                  conversations={conversations}
+                  activeConversationId={activeConversationId}
+                  onSelectConversation={handleSelectConversation}
+                  onSendMessage={handleSendMessage}
+                  currentMessages={currentMessages}
+                  onOpenDatePlan={handleOpenDatePlan}
+                  onReportUser={handleReportUser}
+                  onBlockUser={handleBlockUser}
+                />
+              )}
 
-          {currentTab === "dates" && (
-            <div className="p-4">
-              <DateModeModal
-                matchId={matches[0]?.id || null}
-                onClose={() => setCurrentTab("discover")}
-              />
-            </div>
-          )}
+              {currentTab === "dates" && (
+                <div className="p-4">
+                  <DateModeModal
+                    matchId={matches[0]?.id || null}
+                    onClose={() => setCurrentTab("discover")}
+                  />
+                </div>
+              )}
 
-          {currentTab === "profile" && (
-            <ProfileView
-              profile={currentProfile}
-              cards={connectionCards}
-              myCardAnswers={myCardAnswers}
-              onSaveCardAnswer={handleSaveCardAnswer}
-              onUpdatePrivacy={handleUpdatePrivacy}
-              onLogout={handleLogout}
-            />
-          )}
+              {currentTab === "profile" && (
+                <ProfileView
+                  profile={currentProfile}
+                  cards={connectionCards}
+                  myCardAnswers={myCardAnswers}
+                  onSaveCardAnswer={handleSaveCardAnswer}
+                  onUpdatePrivacy={handleUpdatePrivacy}
+                  onLogout={handleLogout}
+                />
+              )}
 
-          {currentTab === "admin" && <AdminDashboard />}
+              {currentTab === "admin" && <AdminDashboard />}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Bottom Mobile Navigation */}

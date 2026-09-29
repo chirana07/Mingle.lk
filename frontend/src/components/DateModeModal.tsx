@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import confetti from "canvas-confetti";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { DateRecommendation } from "@/lib/types";
 import { api } from "@/lib/api";
 import {
@@ -76,12 +79,21 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
         invitation_note: invitationNote.trim() || undefined,
       });
       setProposedSuccess(true);
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ["#F43F5E", "#F59E0B", "#10B981"],
+      });
+      toast.success("Date Proposal Sent!", {
+        description: `Invitation sent for ${selectedSpot.venue_name} (${selectedSpot.neighborhood}).`,
+      });
       if (onProposeDateSuccess) onProposeDateSuccess();
       setTimeout(() => {
         onClose();
-      }, 1800);
+      }, 1500);
     } catch (e: any) {
-      alert(e.message || "Failed to propose date.");
+      toast.error(e.message || "Failed to propose date.");
     } finally {
       setIsProposing(false);
     }
@@ -89,16 +101,23 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
 
   const handleActivateSafety = () => {
     if (!trustedName.trim() || !trustedPhone.trim()) {
-      alert("Please provide trusted contact details.");
+      toast.error("Please provide trusted contact details.");
       return;
     }
     setSafetyActive(true);
-    alert("Safety plan activated! A private notification will remind you to check in.");
+    toast.success("Private Safety Plan Activated!", {
+      description: `${trustedName} will receive a notification if check-in is missed.`,
+    });
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-white max-h-[92vh] overflow-y-auto animate-fade-in shadow-2xl flex flex-col">
+      <motion.div
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", damping: 20 }}
+        className="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-white max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col"
+      >
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
           <div className="flex items-center space-x-2">
@@ -309,7 +328,7 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };
