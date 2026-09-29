@@ -1,0 +1,57 @@
+{
+  "brand": {
+    "name": "Katha (කතා)",
+    "tagline": "Discover compatible people. Connect meaningfully. Meet safely in Sri Lanka."
+  },
+  "nav": {
+    "discover": "Discover",
+    "connections": "Requests",
+    "matches": "Matches",
+    "chat": "Messages",
+    "dates": "Date Mode",
+    "profile": "Profile",
+    "admin": "Admin / Metrics"
+  },
+  "discovery": {
+    "title": "Today's Curated Connections",
+    "subtitle": "Discover compatible people through intent, lifestyle, and shared connection cards.",
+    "all_cities": "All Sri Lanka",
+    "filter_city": "City",
+    "filter_intent": "Relationship Intent",
+    "compatibility": "Compatibility Analysis",
+    "why_match": "Why you match:",
+    "shared_passions": "Shared Passions",
+    "connect_btn": "Send Connection",
+    "connecting_over": "Connecting over:",
+    "custom_note_placeholder": "Add a friendly opening note (optional)...",
+    "send_request": "Send Request",
+    "empty_state": "You've reviewed today's discovery feed! Check back soon for fresh community connections."
+  },
+  "cards": {
+    "title": "Connection Cards",
+    "hint": "Interaction primitives that reveal what truly matters",
+    "shared_choice": "You both chose this!",
+    "starter_suggestion": "Suggested icebreaker:"
+  },
+  "chat": {
+    "placeholder": "Send a respectful message...",
+    "connection_unlocked": "You found a connection!",
+    "ready_to_meet": "Ready to meet in person?",
+    "plan_safe_date": "Plan Safe Date",
+    "safety_options": "Safety & Controls",
+    "report_user": "Report User",
+    "block_user": "Block User"
+  },
+  "dates": {
+    "title": "Curated Safe Date Spots",
+    "subtitle": "Vetted public, low-pressure venues across Sri Lanka",
+    "budget": "Budget",
+    "safety_plan": "Private Safety Plan",
+    "safety_plan_desc": "Share your meeting location and schedule a private check-in with a trusted friend or family member.",
+    "trusted_contact_name": "Trusted Contact Name",
+    "trusted_contact_phone": "Trusted Contact Phone",
+    "emergency_notes": "Emergency Notes",
+    "save_safety_plan": "Activate Safety Plan",
+    "safety_plan_active": "Safety Plan Active"
+  }
+}
