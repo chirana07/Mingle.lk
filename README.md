@@ -2,11 +2,14 @@
 
 > A Sri Lankan-first relationship discovery platform designed to turn compatibility into safe real-world connections.
 
+[![CI Pipeline](https://github.com/chirana07/Mingle.lk/actions/workflows/ci.yml/badge.svg)](https://github.com/chirana07/Mingle.lk/actions/workflows/ci.yml)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg?logo=next.js&logoColor=white)](https://nextjs.org)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-336791.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0+-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+
+> 👥 **Working on this project as a team?** Read our **[Contributing Guide (CONTRIBUTING.md)](file:///Users/chirana/IdeaProjects/Mingle.lk/CONTRIBUTING.md)** and check the **[Sprint Roadmap (ROADMAP.md)](file:///Users/chirana/IdeaProjects/Mingle.lk/ROADMAP.md)**!
 
 ---
 
@@ -130,61 +133,41 @@ The relational database architecture is built around clean separation between au
 ---
 
 ## 6. Local Development Setup
-
-### Prerequisites
-- Node.js v18+ and npm
-- Python 3.10+
-- PostgreSQL 14+ (or SQLite fallback)
-
-### Step 1: Clone and Configure Environment
-```bash
-git clone <repo-url> Mingle.lk
-cd Mingle.lk
-cp .env.example .env
-```
-
-### Step 2: Set up Backend Virtual Environment
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r <(cat << 'EOF'
-fastapi
-uvicorn[standard]
-sqlalchemy[asyncio]
-asyncpg
-aiosqlite
-pydantic
-pydantic-settings
-python-jose[cryptography]
-bcrypt
-python-multipart
-pytest
-pytest-asyncio
-httpx
-EOF
-)
-```
-
-### Step 3: Run Database Seed Script
-Populates the database with 100+ realistic fictional Sri Lankan profiles across Colombo, Kandy, Galle, and Negombo:
-```bash
-PYTHONPATH=. ./venv/bin/python3 -m backend.seed.seed_data
-```
-
-### Step 4: Run Backend Server
-```bash
-./venv/bin/uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-API Documentation will be live at: `http://localhost:8000/docs`
-
-### Step 5: Run Frontend Application
-In a separate terminal:
-```bash
-cd frontend
-npm install
-npm run dev -- -p 3000
-```
-Open your browser at: `http://localhost:3000`
+ 
+ ### Prerequisites
+ - **Git**
+ - **Python 3.10+** (with pip and virtualenv)
+ - **Node.js 18+** (or 20+) & **npm**
+ - **PostgreSQL 14+** (running locally on port 5432) OR **Docker & Docker Compose**
+ 
+ ### Option A: Quickstart via Makefile / Setup Script (Recommended)
+ 
+ ```bash
+ # 1. Clone repository
+ git clone https://github.com/chirana07/Mingle.lk.git
+ cd Mingle.lk
+ 
+ # 2. Run automated setup (installs deps, sets up .env, seeds database)
+ make setup
+ # OR: ./setup.sh
+ 
+ # 3. Start development servers in two terminals:
+ # Terminal 1 (Backend API with hot reloading on port 8000):
+ make dev-backend
+ 
+ # Terminal 2 (Next.js 15 Frontend on port 3000):
+ make dev-frontend
+ ```
+ 
+ - **Frontend App**: [http://localhost:3000](http://localhost:3000)
+ - **Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+ 
+ ### Option B: Docker Compose
+ 
+ ```bash
+ make docker-up
+ # OR: docker compose up --build
+ ```
 
 ---
 

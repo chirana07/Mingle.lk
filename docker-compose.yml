@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: katha-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: katha_user
+      POSTGRES_PASSWORD: katha_password
+      POSTGRES_DB: mingle_lk
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: katha-backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://katha_user:katha_password@postgres:5432/mingle_lk
+      - SECRET_KEY=katha-super-secret-investor-demo-key-change-in-production-2026
+      - ENVIRONMENT=development
+      - FRONTEND_URL=http://localhost:3000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: katha-frontend
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
