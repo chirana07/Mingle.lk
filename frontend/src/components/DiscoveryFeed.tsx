@@ -178,7 +178,7 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
           </div>
           <h3 className="text-base font-bold text-white mb-1">No Profiles Remaining</h3>
           <p className="text-xs text-slate-400 max-w-xs mx-auto mb-4 leading-relaxed">
-            You've explored all active profiles matching your current filters.
+            You&apos;ve explored all active profiles matching your current filters.
           </p>
           <button
             onClick={() => {
@@ -282,7 +282,7 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                               {topCard.question}
                             </span>
                             <span className="text-white font-semibold text-xs truncate">
-                              "{topCard.target_choice_label}"
+                              &quot;{topCard.target_choice_label}&quot;
                             </span>
                           </div>
                         </div>
@@ -387,7 +387,7 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                     About Me
                   </span>
                   <p className="text-xs text-slate-200 leading-relaxed italic">
-                    "{detailProfile.profile.bio}"
+                    &quot;{detailProfile.profile.bio}&quot;
                   </p>
                 </div>
               )}

@@ -7,9 +7,11 @@ from datetime import datetime, timezone
 from backend.app.core.config import settings
 from backend.app.core.database import init_db, AsyncSessionLocal
 from backend.app.core.security import get_password_hash
+import backend.app.models  # Ensures all model tables register on Base.metadata
 from backend.app.models.user import User, UserRole, UserStatus
 from backend.app.models.card import ConnectionCard
 from backend.app.api.v1.router import api_router
+
 
 # Default Connection Cards designed specifically around Sri Lankan dating context
 DEFAULT_CONNECTION_CARDS = [

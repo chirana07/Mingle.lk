@@ -141,6 +141,43 @@ class DateService:
         )
 
     @staticmethod
+    async def get_latest_date_plan_for_match(
+        db: AsyncSession,
+        match_id: str,
+        user_id: str
+    ) -> Optional[DatePlanResponse]:
+        m_stmt = select(Match).where(Match.id == match_id)
+        m_res = await db.execute(m_stmt)
+        match = m_res.scalar_one_or_none()
+        if not match or (match.user1_id != user_id and match.user2_id != user_id):
+            raise ValueError("Match not found or access denied.")
+
+        stmt = (
+            select(DatePlan)
+            .where(DatePlan.match_id == match_id)
+            .order_by(DatePlan.created_at.desc())
+        )
+        res = await db.execute(stmt)
+        plan = res.scalars().first()
+        if not plan:
+            return None
+
+        return DatePlanResponse(
+            id=plan.id,
+            match_id=plan.match_id,
+            proposed_by_id=plan.proposed_by_id,
+            category=plan.category,
+            venue_name=plan.venue_name,
+            neighborhood=plan.neighborhood,
+            budget_bracket=plan.budget_bracket,
+            scheduled_time=plan.scheduled_time,
+            status=plan.status,
+            invitation_note=plan.invitation_note,
+            created_at=plan.created_at,
+            is_proposed_by_me=(plan.proposed_by_id == user_id),
+        )
+
+    @staticmethod
     async def respond_to_date_plan(
         db: AsyncSession,
         date_plan_id: str,
@@ -184,6 +221,16 @@ class DateService:
         user_id: str,
         data: DateSafetyPlanCreate
     ) -> DateSafetyPlanResponse:
+        p_stmt = select(DatePlan).where(DatePlan.id == date_plan_id).options(selectinload(DatePlan.match))
+        p_res = await db.execute(p_stmt)
+        plan = p_res.scalar_one_or_none()
+        if not plan:
+            raise ValueError("Date plan not found.")
+
+        match = plan.match
+        if not match or user_id not in (match.user1_id, match.user2_id):
+            raise ValueError("Unauthorized: User not part of this date plan.")
+
         sp = DateSafetyPlan(
             date_plan_id=date_plan_id,
             user_id=user_id,
@@ -205,6 +252,16 @@ class DateService:
         user_id: str,
         data: DateFeedbackSubmit
     ) -> bool:
+        p_stmt = select(DatePlan).where(DatePlan.id == date_plan_id).options(selectinload(DatePlan.match))
+        p_res = await db.execute(p_stmt)
+        plan = p_res.scalar_one_or_none()
+        if not plan:
+            raise ValueError("Date plan not found.")
+
+        match = plan.match
+        if not match or user_id not in (match.user1_id, match.user2_id):
+            raise ValueError("Unauthorized: User not part of this date plan.")
+
         fb = DateFeedback(
             date_plan_id=date_plan_id,
             user_id=user_id,
@@ -217,3 +274,4 @@ class DateService:
         db.add(fb)
         await db.commit()
         return True
+

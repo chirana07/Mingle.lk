@@ -8,6 +8,8 @@ __pycache__/
 .coverage
 htmlcov/
 mingle.db
+*.db
+katha.db
 
 # Node & Next.js
 node_modules/

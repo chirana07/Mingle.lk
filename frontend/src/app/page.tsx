@@ -64,30 +64,7 @@ export default function Home() {
 
   const t = getTranslation(currentLocale);
 
-  // Auto-init: check existing session or login as Demo User for investor preview
-  useEffect(() => {
-    initSession();
-  }, []);
-
-  const initSession = async () => {
-    const token = api.getToken();
-    if (token) {
-      try {
-        const me = await api.getMe();
-        setCurrentUser(me);
-        const prof = await api.getMyProfile();
-        setCurrentProfile(prof);
-        await loadAllAppData();
-        return;
-      } catch (e) {
-        api.setToken(null);
-      }
-    }
-    // Default fast-track demo login
-    handleQuickDemoLogin();
-  };
-
-  const loadAllAppData = async () => {
+  const loadAllAppData = useCallback(async () => {
     setIsLoadingFeed(true);
     try {
       const [cards, myAnswers, reqs, matchItems, convs, disc] = await Promise.all([
@@ -109,7 +86,45 @@ export default function Home() {
     } finally {
       setIsLoadingFeed(false);
     }
-  };
+  }, [selectedCity, selectedIntent]);
+
+  // Demo user login (Senuri)
+  const handleQuickDemoLogin = useCallback(async () => {
+    try {
+      const authRes = await api.verifyOtp("+94771234567", "123456");
+      api.setToken(authRes.access_token);
+      const me = await api.getMe();
+      setCurrentUser(me);
+      const prof = await api.getMyProfile();
+      setCurrentProfile(prof);
+      await loadAllAppData();
+    } catch (e) {
+      console.error("Demo login failed", e);
+    }
+  }, [loadAllAppData]);
+
+  const initSession = useCallback(async () => {
+    const token = api.getToken();
+    if (token) {
+      try {
+        const me = await api.getMe();
+        setCurrentUser(me);
+        const prof = await api.getMyProfile();
+        setCurrentProfile(prof);
+        await loadAllAppData();
+        return;
+      } catch (e) {
+        api.setToken(null);
+      }
+    }
+    // Default fast-track demo login
+    handleQuickDemoLogin();
+  }, [loadAllAppData, handleQuickDemoLogin]);
+
+  // Auto-init: check existing session or login as Demo User for investor preview
+  useEffect(() => {
+    initSession();
+  }, [initSession]);
 
   const handleCityChange = async (city: string) => {
     setSelectedCity(city);
@@ -134,21 +149,6 @@ export default function Home() {
       console.error(e);
     } finally {
       setIsLoadingFeed(false);
-    }
-  };
-
-  // Demo user login (Senuri)
-  const handleQuickDemoLogin = async () => {
-    try {
-      const authRes = await api.verifyOtp("+94771234567", "123456");
-      api.setToken(authRes.access_token);
-      const me = await api.getMe();
-      setCurrentUser(me);
-      const prof = await api.getMyProfile();
-      setCurrentProfile(prof);
-      await loadAllAppData();
-    } catch (e) {
-      console.error("Demo login failed", e);
     }
   };
 
@@ -222,6 +222,7 @@ export default function Home() {
       }
 
       // Connect WebSocket
+      // Connect WebSocket
       if (wsClient) {
         wsClient.close();
       }
@@ -232,11 +233,33 @@ export default function Home() {
           const ws = new WebSocket(wsUrl);
           ws.onmessage = (event) => {
             try {
-              const incomingMsg = JSON.parse(event.data);
+              const data = JSON.parse(event.data);
+              const incomingMsg = data.type === "new_message" ? data.message : (data.id ? data : null);
               if (incomingMsg && incomingMsg.id) {
-                setCurrentMessages((prev) => [...prev, incomingMsg]);
+                const formattedMsg: MessageItem = {
+                  id: incomingMsg.id,
+                  conversation_id: incomingMsg.conversation_id,
+                  sender_id: incomingMsg.sender_id,
+                  content: incomingMsg.content,
+                  created_at: incomingMsg.created_at,
+                  read_at: incomingMsg.read_at,
+                  is_mine: incomingMsg.sender_id === (currentUser?.id || ""),
+                };
+                setCurrentMessages((prev) => {
+                  if (prev.some((m) => m.id === formattedMsg.id)) return prev;
+                  return [...prev, formattedMsg];
+                });
+                setConversations((prev) =>
+                  prev.map((c) =>
+                    c.id === incomingMsg.conversation_id
+                      ? { ...c, last_message: formattedMsg }
+                      : c
+                  )
+                );
               }
-            } catch (err) {}
+            } catch (err) {
+              console.error("Failed to parse websocket message", err);
+            }
           };
           setWsClient(ws);
         } catch (err) {
@@ -244,13 +267,14 @@ export default function Home() {
         }
       }
     },
-    [wsClient]
+    [wsClient, currentUser]
   );
 
   const handleSendMessage = async (convId: string, content: string) => {
     if (wsClient && wsClient.readyState === WebSocket.OPEN) {
       wsClient.send(
         JSON.stringify({
+          type: "message",
           action: "send_message",
           content: content,
         })
@@ -258,7 +282,10 @@ export default function Home() {
     } else {
       // Fallback HTTP
       const newMsg = await api.sendMessage(convId, content);
-      setCurrentMessages((prev) => [...prev, newMsg]);
+      setCurrentMessages((prev) => {
+        if (prev.some((m) => m.id === newMsg.id)) return prev;
+        return [...prev, newMsg];
+      });
     }
     // Update local conversations last message
     setConversations((prev) =>
@@ -305,12 +332,15 @@ export default function Home() {
     discoveryEnabled: boolean,
     showNeighborhoodOnly: boolean
   ) => {
-    const updated = await api.updateMyProfile({
-      discovery_enabled: discoveryEnabled,
-      show_neighborhood_only: showNeighborhoodOnly,
-    });
-    setCurrentProfile(updated);
+    try {
+      await api.updatePrivacySettings(discoveryEnabled, showNeighborhoodOnly);
+      const prof = await api.getMyProfile();
+      setCurrentProfile(prof);
+    } catch (e) {
+      console.error("Failed to update privacy settings", e);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-rose-500 selection:text-white">

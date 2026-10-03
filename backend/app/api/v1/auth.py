@@ -6,20 +6,32 @@ from backend.app.services.auth_service import AuthService
 from backend.app.api.deps import get_current_user
 from backend.app.models.user import User
 
+from backend.app.core.config import settings
+from backend.app.core.security import is_demo_identifier
+
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/request-otp", response_model=OTPResponse)
 async def request_otp(data: OTPRequest, db: AsyncSession = Depends(get_db)):
     """Request a one-time login verification code via Phone or Email"""
-    if not data.identifier or len(data.identifier.strip()) < 5:
+    clean_id = data.identifier.strip()
+    if not clean_id or len(clean_id) < 5:
         raise HTTPException(status_code=400, detail="Valid phone number or email is required.")
     
-    code = await AuthService.request_otp(db, data.identifier.strip())
+    code = await AuthService.request_otp(db, clean_id)
+    is_dev = settings.ENVIRONMENT in ["development", "test"]
+    should_expose = is_dev and is_demo_identifier(clean_id)
+
+    msg = f"Verification code sent to {clean_id}."
+    if should_expose:
+        msg += f" (Demo code: {code})"
+
     return OTPResponse(
-        message=f"Verification code sent to {data.identifier}. (Demo code: {code})",
-        demo_code=code
+        message=msg,
+        demo_code=code if should_expose else None
     )
+
 
 
 @router.post("/verify-otp", response_model=TokenResponse)

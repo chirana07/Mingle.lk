@@ -116,7 +116,7 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
                       Their Opening Note:
                     </span>
                     <p className="text-xs text-slate-200 italic leading-relaxed">
-                      "{req.intro_note}"
+                      &quot;{req.intro_note}&quot;
                     </p>
                   </div>
                 )}

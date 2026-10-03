@@ -42,12 +42,30 @@ def decode_token(token: str) -> Optional[dict]:
         return None
 
 
+DEMO_IDENTIFIERS = {
+    "+94771234567",
+    "demo@mingle.lk",
+    "admin@mingle.lk",
+}
+
+
+def is_demo_identifier(identifier: str) -> bool:
+    if identifier in DEMO_IDENTIFIERS:
+        return True
+    # In development/test mode, also allow automated test suite numbers
+    if settings.ENVIRONMENT in ["development", "test"] and (
+        identifier.startswith("+94771111") or identifier.startswith("+94772222")
+    ):
+        return True
+    return False
+
+
 def generate_otp(identifier: str) -> str:
     """
     Generates a 6-digit OTP code for a phone number or email.
-    For investor demo convenience, fixed test phone '+94771234567' / 'demo@mingle.lk' produces '123456'.
+    In development/test, fixed demo identifiers produce '123456'.
     """
-    if identifier in ["+94771234567", "demo@mingle.lk", "admin@mingle.lk"]:
+    if settings.ENVIRONMENT in ["development", "test"] and is_demo_identifier(identifier):
         code = "123456"
     else:
         code = f"{random.randint(100000, 999999)}"
@@ -61,8 +79,8 @@ def generate_otp(identifier: str) -> str:
 
 def verify_otp(identifier: str, code: str) -> bool:
     """Verifies submitted OTP code against storage"""
-    # Universal demo bypass for testing/demo script
-    if code == "123456":
+    # Demo bypass allowed only in development or test environment for verified demo identifiers
+    if settings.ENVIRONMENT in ["development", "test"] and code == "123456" and is_demo_identifier(identifier):
         return True
     
     record = _otp_storage.get(identifier)
@@ -77,3 +95,4 @@ def verify_otp(identifier: str, code: str) -> bool:
         del _otp_storage[identifier]
         return True
     return False
+

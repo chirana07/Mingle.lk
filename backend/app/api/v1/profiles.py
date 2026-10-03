@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.core.database import get_db
 from backend.app.api.deps import get_current_user
 from backend.app.models.user import User
-from backend.app.schemas.profile import ProfileCreate, ProfileResponse, ProfileUpdate
+from backend.app.schemas.profile import ProfileCreate, ProfileResponse, ProfileUpdate, PrivacyUpdate
 from backend.app.services.profile_service import ProfileService
 
 router = APIRouter(prefix="/profiles", tags=["Profiles"])
@@ -45,15 +45,24 @@ async def get_user_profile(
 
 @router.patch("/me/privacy")
 async def update_privacy_settings(
+    data: Optional[PrivacyUpdate] = None,
     discovery_enabled: Optional[bool] = None,
     show_neighborhood_only: Optional[bool] = None,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
     """Adjust Discovery Mode and privacy controls"""
-    if discovery_enabled is not None:
-        current_user.discovery_enabled = discovery_enabled
-    if show_neighborhood_only is not None:
-        current_user.show_neighborhood_only = show_neighborhood_only
+    disc_val = data.discovery_enabled if (data and data.discovery_enabled is not None) else discovery_enabled
+    neigh_val = data.show_neighborhood_only if (data and data.show_neighborhood_only is not None) else show_neighborhood_only
+
+    if disc_val is not None:
+        current_user.discovery_enabled = disc_val
+    if neigh_val is not None:
+        current_user.show_neighborhood_only = neigh_val
     await db.commit()
-    return {"message": "Privacy settings updated successfully."}
+    return {
+        "message": "Privacy settings updated successfully.",
+        "discovery_enabled": current_user.discovery_enabled,
+        "show_neighborhood_only": current_user.show_neighborhood_only
+    }
+

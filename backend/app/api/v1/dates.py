@@ -35,6 +35,19 @@ async def propose_date(
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.get("/match/{match_id}", response_model=Optional[DatePlanResponse])
+async def get_latest_date_plan(
+    match_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Retrieve the latest date proposal for a match"""
+    try:
+        return await DateService.get_latest_date_plan_for_match(db, match_id, current_user.id)
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+
+
 @router.post("/{date_plan_id}/respond", response_model=DatePlanResponse)
 async def respond_to_date(
     date_plan_id: str,
@@ -57,7 +70,10 @@ async def create_safety_plan(
     db: AsyncSession = Depends(get_db)
 ):
     """Create a private safety plan with a trusted contact and check-in prompt"""
-    return await DateService.create_safety_plan(db, date_plan_id, current_user.id, data)
+    try:
+        return await DateService.create_safety_plan(db, date_plan_id, current_user.id, data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/{date_plan_id}/feedback")
@@ -68,5 +84,9 @@ async def submit_date_feedback(
     db: AsyncSession = Depends(get_db)
 ):
     """Submit post-date comfort and accuracy signals to build platform trust silently"""
-    await DateService.submit_date_feedback(db, date_plan_id, current_user.id, data)
-    return {"message": "Thank you! Your feedback helps keep Mingle safe and respectful."}
+    try:
+        await DateService.submit_date_feedback(db, date_plan_id, current_user.id, data)
+        return {"message": "Thank you! Your feedback helps keep Mingle safe and respectful."}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+

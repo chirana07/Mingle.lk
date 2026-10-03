@@ -89,16 +89,19 @@ export const Navigation: React.FC<NavigationProps> = ({
         </button>
 
         {/* Admin */}
-        <button
-          onClick={() => onTabChange("admin")}
-          className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
-            currentTab === "admin" ? "text-amber-400 font-semibold" : "text-slate-400 hover:text-slate-200"
-          }`}
-        >
-          <BarChart3 className={`w-5 h-5 ${currentTab === "admin" ? "stroke-[2.5]" : "stroke-[1.75]"}`} />
-          <span className="text-[10px] mt-0.5">Admin</span>
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => onTabChange("admin")}
+            className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
+              currentTab === "admin" ? "text-amber-400 font-semibold" : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <BarChart3 className={`w-5 h-5 ${currentTab === "admin" ? "stroke-[2.5]" : "stroke-[1.75]"}`} />
+            <span className="text-[10px] mt-0.5">Admin</span>
+          </button>
+        )}
       </div>
     </nav>
+
   );
 };

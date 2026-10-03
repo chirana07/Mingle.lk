@@ -62,7 +62,13 @@ class ProfileUpdate(BaseModel):
     languages: Optional[List[str]] = None
 
 
+class PrivacyUpdate(BaseModel):
+    discovery_enabled: Optional[bool] = None
+    show_neighborhood_only: Optional[bool] = None
+
+
 class ProfileResponse(ProfileBase):
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str

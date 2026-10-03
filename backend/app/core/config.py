@@ -11,10 +11,10 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     API_V1_STR: str = "/api/v1"
 
-    # Database
+    # Database (Defaults to zero-config local SQLite for seamless development & testing)
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL", 
-        "postgresql+asyncpg://chirana@localhost:5432/mingle_lk"
+        "sqlite+aiosqlite:///./katha.db"
     )
 
     # Security

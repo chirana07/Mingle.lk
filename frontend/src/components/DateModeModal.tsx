@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -43,6 +43,7 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
   const [invitationNote, setInvitationNote] = useState("");
   const [isProposing, setIsProposing] = useState(false);
   const [proposedSuccess, setProposedSuccess] = useState(false);
+  const [createdDatePlanId, setCreatedDatePlanId] = useState<string | null>(null);
 
   // Safety plan state
   const [trustedName, setTrustedName] = useState("Amaya Perera (Sister)");
@@ -50,11 +51,7 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
   const [emergencyNotes, setEmergencyNotes] = useState("Meeting at Barefoot Garden Cafe Colombo around 4:30 PM");
   const [safetyActive, setSafetyActive] = useState(false);
 
-  useEffect(() => {
-    loadRecommendations();
-  }, [selectedCity, selectedBudget]);
-
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await api.getDateRecommendations(selectedCity, selectedBudget);
@@ -64,13 +61,32 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedCity, selectedBudget]);
+
+  useEffect(() => {
+    loadRecommendations();
+  }, [loadRecommendations]);
+
+  // Load existing date proposal for match if available
+  useEffect(() => {
+    if (matchId) {
+      api.getLatestDatePlan(matchId)
+        .then((plan) => {
+          if (plan) {
+            setCreatedDatePlanId(plan.id);
+          }
+        })
+        .catch((e) => {
+          console.error("Failed to load match date plan", e);
+        });
+    }
+  }, [matchId]);
 
   const handlePropose = async () => {
     if (!matchId || !selectedSpot) return;
     setIsProposing(true);
     try {
-      await api.proposeDate({
+      const planRes = await api.proposeDate({
         match_id: matchId,
         category: selectedSpot.category,
         venue_name: selectedSpot.venue_name,
@@ -78,6 +94,9 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
         budget_bracket: selectedSpot.budget_bracket,
         invitation_note: invitationNote.trim() || undefined,
       });
+      if (planRes && planRes.id) {
+        setCreatedDatePlanId(planRes.id);
+      }
       setProposedSuccess(true);
       confetti({
         particleCount: 100,
@@ -86,12 +105,9 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
         colors: ["#F43F5E", "#F59E0B", "#10B981"],
       });
       toast.success("Date Proposal Sent!", {
-        description: `Invitation sent for ${selectedSpot.venue_name} (${selectedSpot.neighborhood}).`,
+        description: `Invitation sent for ${selectedSpot.venue_name} (${selectedSpot.neighborhood}). You can now set up your Private Safety Plan.`,
       });
       if (onProposeDateSuccess) onProposeDateSuccess();
-      setTimeout(() => {
-        onClose();
-      }, 1500);
     } catch (e: any) {
       toast.error(e.message || "Failed to propose date.");
     } finally {
@@ -99,15 +115,43 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
     }
   };
 
-  const handleActivateSafety = () => {
+  const handleActivateSafety = async () => {
     if (!trustedName.trim() || !trustedPhone.trim()) {
       toast.error("Please provide trusted contact details.");
       return;
     }
-    setSafetyActive(true);
-    toast.success("Private Safety Plan Activated!", {
-      description: `${trustedName} will receive a notification if check-in is missed.`,
-    });
+
+    let planId = createdDatePlanId;
+    if (!planId && matchId) {
+      try {
+        const plan = await api.getLatestDatePlan(matchId);
+        if (plan) {
+          planId = plan.id;
+          setCreatedDatePlanId(plan.id);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    if (!planId) {
+      toast.error("Please propose a date first before activating a safety plan.");
+      return;
+    }
+
+    try {
+      await api.createSafetyPlan(planId, {
+        trusted_contact_name: trustedName.trim(),
+        trusted_contact_phone: trustedPhone.trim(),
+        emergency_notes: emergencyNotes.trim() || undefined,
+      });
+      setSafetyActive(true);
+      toast.success("Private Safety Plan Activated!", {
+        description: `${trustedName} will receive a notification if check-in is missed.`,
+      });
+    } catch (e: any) {
+      toast.error(e.message || "Failed to activate safety plan.");
+    }
   };
 
   return (
@@ -249,9 +293,29 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
                 </div>
 
                 {proposedSuccess ? (
-                  <div className="py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold text-center flex items-center justify-center space-x-1.5">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>Date Proposal Sent!</span>
+                  <div className="p-3 rounded-2xl bg-emerald-950/60 border border-emerald-800/80 space-y-2">
+                    <div className="flex items-center space-x-2 text-emerald-400 font-bold text-xs">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Date Proposal Sent!</span>
+                    </div>
+                    <p className="text-[11px] text-slate-300">
+                      Your invitation for <strong>{selectedSpot.venue_name}</strong> was delivered. Set up your zero-shame safety plan now to notify a trusted contact if needed.
+                    </p>
+                    <div className="flex items-center space-x-2 pt-1">
+                      <button
+                        onClick={() => setActiveTab("safety")}
+                        className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs hover:opacity-95 shadow transition flex items-center justify-center space-x-1"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>Configure Safety Plan</span>
+                      </button>
+                      <button
+                        onClick={onClose}
+                        className="py-2 px-3 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold"
+                      >
+                        Done
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <button

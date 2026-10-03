@@ -103,9 +103,20 @@ class ApiClient {
     });
   }
 
+  async updatePrivacySettings(discoveryEnabled?: boolean, showNeighborhoodOnly?: boolean): Promise<any> {
+    return this.request("/profiles/me/privacy", {
+      method: "PATCH",
+      body: JSON.stringify({
+        discovery_enabled: discoveryEnabled,
+        show_neighborhood_only: showNeighborhoodOnly,
+      }),
+    });
+  }
+
   async getUserProfile(userId: string): Promise<UserProfile> {
     return this.request(`/profiles/${userId}`);
   }
+
 
   // --- Discovery ---
   async getDiscoveryFeed(city?: string, intent?: string): Promise<DiscoveryProfileItem[]> {
@@ -180,10 +191,23 @@ class ApiClient {
 
   getWebSocketUrl(conversationId: string): string {
     const token = this.getToken() || "";
-    const wsProto = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const host = process.env.NEXT_PUBLIC_API_HOST || "localhost:8000";
+    let wsProto = "ws:";
+    if (typeof window !== "undefined") {
+      wsProto = window.location.protocol === "https:" ? "wss:" : "ws:";
+    }
+    let host = process.env.NEXT_PUBLIC_API_HOST;
+    if (!host && process.env.NEXT_PUBLIC_API_URL) {
+      try {
+        const parsed = new URL(process.env.NEXT_PUBLIC_API_URL);
+        host = parsed.host;
+      } catch (e) {}
+    }
+    if (!host) {
+      host = "localhost:8000";
+    }
     return `${wsProto}//${host}/api/v1/chat/ws/${conversationId}?token=${encodeURIComponent(token)}`;
   }
+
 
   // --- Date Mode & Safety ---
   async getDateRecommendations(city?: string, budget?: string): Promise<DateRecommendation[]> {
@@ -206,6 +230,10 @@ class ApiClient {
       method: "POST",
       body: JSON.stringify(data),
     });
+  }
+
+  async getLatestDatePlan(matchId: string): Promise<DatePlanItem | null> {
+    return this.request(`/dates/match/${matchId}`);
   }
 
   async respondDatePlan(datePlanId: string, accept: boolean): Promise<DatePlanItem> {

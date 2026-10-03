@@ -125,7 +125,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 />
               </div>
               <p className="text-[10px] text-slate-400 mt-1">
-                We'll send a 6-digit verification code to confirm it's you.
+                We&apos;ll send a 6-digit verification code to confirm it&apos;s you.
               </p>
             </div>
 

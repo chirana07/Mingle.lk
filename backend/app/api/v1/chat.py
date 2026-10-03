@@ -1,10 +1,13 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, Query
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.core.database import get_db, AsyncSessionLocal
 from backend.app.api.deps import get_current_user
 from backend.app.core.security import decode_token
 from backend.app.models.user import User
+from backend.app.models.chat import Conversation
 from backend.app.schemas.chat import ConversationSummary, MessageResponse, MessageSend
 from backend.app.services.chat_service import ChatService, ws_manager
 
@@ -74,14 +77,29 @@ async def websocket_chat_endpoint(
         return
 
     user_id = payload["sub"]
+
+    # Verify conversation exists and user is an authorized participant (IDOR authorization check)
+    async with AsyncSessionLocal() as session:
+        c_stmt = (
+            select(Conversation)
+            .where(Conversation.id == conversation_id)
+            .options(selectinload(Conversation.match))
+        )
+        c_res = await session.execute(c_stmt)
+        conv = c_res.scalar_one_or_none()
+        if not conv or not conv.match or user_id not in (conv.match.user1_id, conv.match.user2_id):
+            await websocket.close(code=4003)
+            return
+
     await ws_manager.connect(websocket, conversation_id, user_id)
 
     try:
         while True:
             data = await websocket.receive_json()
-            event_type = data.get("type")
+            # Support both 'type' and 'action' conventions
+            event_type = data.get("type") or data.get("action")
 
-            if event_type == "message":
+            if event_type in ["message", "send_message"]:
                 content = data.get("content", "").strip()
                 if content:
                     async with AsyncSessionLocal() as session:
@@ -107,3 +125,4 @@ async def websocket_chat_endpoint(
         ws_manager.disconnect(websocket, conversation_id, user_id)
     except Exception:
         ws_manager.disconnect(websocket, conversation_id, user_id)
+

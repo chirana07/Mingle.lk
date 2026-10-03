@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AdminMetrics } from "@/lib/types";
 import { api } from "@/lib/api";
 import {
@@ -26,11 +26,7 @@ export const AdminDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
       const [m, r, u] = await Promise.all([
@@ -46,7 +42,11 @@ export const AdminDashboard: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleUpdateReport = async (reportId: string, status: string) => {
     try {
@@ -252,7 +252,7 @@ export const AdminDashboard: React.FC = () => {
                   </div>
 
                   <p className="text-slate-200 bg-slate-950 p-2.5 rounded-xl border border-slate-850">
-                    "{r.details}"
+                    &quot;{r.details}&quot;
                   </p>
 
                   {r.status === "pending" && (

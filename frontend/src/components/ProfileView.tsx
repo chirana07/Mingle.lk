@@ -121,7 +121,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
           {profile.bio && (
             <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
-              "{profile.bio}"
+              &quot;{profile.bio}&quot;
             </p>
           )}
         </div>
@@ -151,7 +151,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           <div className="flex items-center justify-between border-t border-slate-800 pt-3">
             <div>
               <span className="text-xs font-medium text-white block">Neighborhood Visibility Only</span>
-              <span className="text-[11px] text-slate-400">Hides precise distance; displays "Colombo 05" only</span>
+              <span className="text-[11px] text-slate-400">Hides precise distance; displays &quot;Colombo 05&quot; only</span>
             </div>
             <input
               type="checkbox"
