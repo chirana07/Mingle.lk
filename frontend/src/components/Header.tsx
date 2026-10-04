@@ -156,15 +156,17 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Actions */}
         <div className="flex items-center space-x-2">
-          {/* Investor Pitch Drawer Launcher */}
+          {/* Investor Pitch Tour Launcher */}
           {onTogglePitchDrawer && (
             <button
               onClick={onTogglePitchDrawer}
-              className="hidden sm:flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25 transition shadow-sm"
-              title="Open Investor Pitch Panel"
+              className="flex items-center space-x-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-rose-500/20 text-amber-300 border border-amber-500/40 hover:border-amber-400 hover:from-amber-500/30 hover:to-rose-500/30 transition shadow-sm cursor-pointer"
+              title="Interactive Investor Guided Pitch Walkthrough"
             >
               <Presentation className="w-3.5 h-3.5 text-amber-400" />
-              <span>Pitch Mode</span>
+              <span className="hidden md:inline">Investor Pitch Tour</span>
+              <span className="md:hidden">Pitch Tour</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
             </button>
           )}
 

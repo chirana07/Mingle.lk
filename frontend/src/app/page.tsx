@@ -21,6 +21,7 @@ import { DateModeModal } from "@/components/DateModeModal";
 import { ProfileView } from "@/components/ProfileView";
 import { AdminDashboard } from "@/components/AdminDashboard";
 import { AuthModal } from "@/components/AuthModal";
+import { InvestorPitchTour } from "@/components/InvestorPitchTour";
 
 export default function Home() {
   const [currentLocale, setCurrentLocale] = useState<Locale>("en");
@@ -49,6 +50,7 @@ export default function Home() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [dateModalMatchId, setDateModalMatchId] = useState<string | null>(null);
+  const [isPitchTourOpen, setIsPitchTourOpen] = useState(false);
   const [isLoadingFeed, setIsLoadingFeed] = useState(false);
 
   const t = getTranslation(currentLocale);
@@ -290,6 +292,25 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col font-sans selection:bg-rose-500 selection:text-white">
+      {/* Investor Pitch Tour Desktop Callout Banner */}
+      {!isPitchTourOpen && (
+        <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-amber-500/15 border-b border-amber-500/30 px-3 py-1.5 text-center text-xs flex items-center justify-center space-x-2">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/25 text-amber-300 border border-amber-500/30">
+            INVESTOR / ACCELERATOR PREVIEW
+          </span>
+          <span className="text-slate-300 hidden sm:inline text-xs">
+            Reviewing Katha for Pre-Seed? Explore our 5 core defensibility proof points &amp; unit economics.
+          </span>
+          <button
+            onClick={() => setIsPitchTourOpen(true)}
+            className="text-amber-400 font-bold hover:text-amber-300 underline underline-offset-2 flex items-center space-x-1 cursor-pointer ml-1 text-xs"
+          >
+            <span>Launch Guided Tour</span>
+            <span aria-hidden="true">&rarr;</span>
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <Header
         currentLocale={currentLocale}
@@ -301,6 +322,7 @@ export default function Home() {
         onOpenAuth={() => setIsAuthOpen(true)}
         currentTab={currentTab}
         onTabChange={setCurrentTab}
+        onTogglePitchDrawer={() => setIsPitchTourOpen((prev) => !prev)}
         requestCount={requests.length}
         unreadCount={unreadCount}
         isAdmin={currentUser?.role === "admin"}
@@ -400,6 +422,20 @@ export default function Home() {
           }
           await initSession();
         }}
+      />
+
+      {/* Interactive Investor Guided Pitch Walkthrough */}
+      <InvestorPitchTour
+        isOpen={isPitchTourOpen}
+        onClose={() => setIsPitchTourOpen(false)}
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        onOpenDateModal={(matchId) => {
+          if (matchId) setDateModalMatchId(matchId);
+          setIsDateModalOpen(true);
+        }}
+        onQuickDemoLogin={handleQuickDemoLogin}
+        onQuickAdminLogin={handleQuickAdminLogin}
       />
 
       {/* Bottom Navigation */}
