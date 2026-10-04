@@ -7,11 +7,13 @@ from backend.app.models.chat import Conversation, Message
 from backend.app.models.date import DatePlan, DateSafetyPlan, DateFeedback
 from backend.app.models.safety import Report, Block
 from backend.app.models.analytics import AnalyticsEvent
+from backend.app.models.subscription import Subscription
 
 __all__ = [
     "Base",
     "TimeStampedModel",
     "User",
+    "Subscription",
     "UserRole",
     "UserStatus",
     "Verification",

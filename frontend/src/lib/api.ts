@@ -9,6 +9,10 @@ import {
   DateRecommendation,
   DatePlanItem,
   AdminMetrics,
+  SubscriptionPlanItem,
+  SubscriptionStatus,
+  PayHereCheckoutParams,
+  CardResponderItem,
 } from "./types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
@@ -309,6 +313,48 @@ class ApiClient {
     return this.request(`/admin/users/${userId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
+    });
+  }
+
+  // --- Katha Plus & Subscriptions (Issue #4) ---
+  async getSubscriptionPlans(): Promise<SubscriptionPlanItem[]> {
+    return this.request("/subscriptions/plans");
+  }
+
+  async getSubscriptionStatus(): Promise<SubscriptionStatus> {
+    return this.request("/subscriptions/status");
+  }
+
+  async checkoutSubscription(data: {
+    plan_id: string;
+    spotlight_district?: string;
+    payment_method?: string;
+  }): Promise<PayHereCheckoutParams> {
+    return this.request("/subscriptions/checkout", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async simulateSubscription(data: {
+    plan_id: string;
+    spotlight_district?: string;
+    payment_method?: string;
+  }): Promise<SubscriptionStatus> {
+    return this.request("/subscriptions/simulate-payment", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getCardResponders(): Promise<CardResponderItem[]> {
+    return this.request("/subscriptions/card-responders");
+  }
+
+  async setSpotlightDistrict(district: string): Promise<SubscriptionStatus> {
+    return this.request("/subscriptions/set-spotlight-district", {
+      method: "POST",
+      body: JSON.stringify({ district }),
     });
   }
 }

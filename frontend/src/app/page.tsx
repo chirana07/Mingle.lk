@@ -22,6 +22,8 @@ import { ProfileView } from "@/components/ProfileView";
 import { AdminDashboard } from "@/components/AdminDashboard";
 import { AuthModal } from "@/components/AuthModal";
 import { InvestorPitchTour } from "@/components/InvestorPitchTour";
+import { KathaPlusModal } from "@/components/KathaPlusModal";
+import { CardRespondersDrawer } from "@/components/CardRespondersDrawer";
 
 export default function Home() {
   const [currentLocale, setCurrentLocale] = useState<Locale>("en");
@@ -51,6 +53,8 @@ export default function Home() {
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [dateModalMatchId, setDateModalMatchId] = useState<string | null>(null);
   const [isPitchTourOpen, setIsPitchTourOpen] = useState(false);
+  const [isKathaPlusOpen, setIsKathaPlusOpen] = useState(false);
+  const [isRespondersOpen, setIsRespondersOpen] = useState(false);
   const [isLoadingFeed, setIsLoadingFeed] = useState(false);
 
   const t = getTranslation(currentLocale);
@@ -320,6 +324,7 @@ export default function Home() {
         onQuickAdminLogin={handleQuickAdminLogin}
         onLogout={handleLogout}
         onOpenAuth={() => setIsAuthOpen(true)}
+        onOpenKathaPlus={() => setIsKathaPlusOpen(true)}
         currentTab={currentTab}
         onTabChange={setCurrentTab}
         onTogglePitchDrawer={() => setIsPitchTourOpen((prev) => !prev)}
@@ -392,6 +397,8 @@ export default function Home() {
             onSaveCardAnswer={handleSaveCardAnswer}
             onUpdatePrivacy={handleUpdatePrivacy}
             onLogout={handleLogout}
+            onOpenKathaPlus={() => setIsKathaPlusOpen(true)}
+            onOpenResponders={() => setIsRespondersOpen(true)}
           />
         )}
 
@@ -434,8 +441,30 @@ export default function Home() {
           if (matchId) setDateModalMatchId(matchId);
           setIsDateModalOpen(true);
         }}
+        onOpenKathaPlus={() => setIsKathaPlusOpen(true)}
         onQuickDemoLogin={handleQuickDemoLogin}
         onQuickAdminLogin={handleQuickAdminLogin}
+      />
+
+      {/* Katha Plus Micro-Subscription Modal (Issue #4) */}
+      <KathaPlusModal
+        isOpen={isKathaPlusOpen}
+        onClose={() => setIsKathaPlusOpen(false)}
+        initialDistrict={currentProfile?.city || "Colombo"}
+        onSuccess={() => {
+          loadAllAppData();
+          api.getMyProfile().then((p) => setCurrentProfile(p)).catch(() => {});
+        }}
+      />
+
+      {/* Card Responders Drawer (Issue #4) */}
+      <CardRespondersDrawer
+        isOpen={isRespondersOpen}
+        onClose={() => setIsRespondersOpen(false)}
+        onOpenKathaPlus={() => setIsKathaPlusOpen(true)}
+        onOpenSendNote={() => {
+          setCurrentTab("discover");
+        }}
       />
 
       {/* Bottom Navigation */}

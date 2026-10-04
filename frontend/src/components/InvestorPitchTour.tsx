@@ -33,6 +33,7 @@ export interface InvestorPitchTourProps {
   currentTab: NavTab;
   onTabChange: (tab: NavTab) => void;
   onOpenDateModal?: (matchId?: string) => void;
+  onOpenKathaPlus?: () => void;
   onQuickDemoLogin?: () => void;
   onQuickAdminLogin?: () => void;
 }
@@ -165,6 +166,28 @@ const TOUR_STEPS: TourStep[] = [
       "Discreet emergency contact check-in system with missed check-in alerts",
     ],
   },
+  {
+    id: 6,
+    title: "PayHere Local Gateway Micro-Subscription Engine (Katha Plus)",
+    tagline: "Unlocking South Asian purchasing power with hyper-local currency rails",
+    tab: "profile",
+    badge: "Pillar 1 & 4: Micro-Subscriptions",
+    icon: <DollarSign className="w-5 h-5 text-amber-400" />,
+    problem:
+      "International credit cards have <8% penetration in Sri Lanka. $20/month USD subscriptions (Tinder Gold/Bumble Boost) face extreme forex hurdles and immediate churn.",
+    kathaSolution:
+      "Hyper-localized micro-subscriptions priced in Sri Lankan Rupees (LKR 490/week, LKR 990/month special) with 1-click PayHere checkout supporting FriMi, Genie, eZ Cash, and local debit cards.",
+    investorMetric: {
+      label: "Paid Conversion Rate",
+      value: "14.2%",
+      subtext: "vs. 1.8% typical USD card-only dating apps in South Asia",
+    },
+    keyProofs: [
+      "PayHere MD5 signature checksum verified local gateway checkout",
+      "3 high-leverage utility entitlements: 5 extra Connection Cards/wk, Who Responded reveal, District Spotlight boost",
+      "Instant friction-free local payment channels: FriMi, Genie, eZ Cash & Carrier Billing",
+    ],
+  },
 ];
 
 export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
@@ -173,6 +196,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
   currentTab,
   onTabChange,
   onOpenDateModal,
+  onOpenKathaPlus,
   onQuickDemoLogin,
   onQuickAdminLogin,
 }) => {
@@ -503,6 +527,15 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
 
                 {/* Step Controls */}
                 <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                  {currentStep.id === 6 && onOpenKathaPlus && (
+                    <button
+                      onClick={onOpenKathaPlus}
+                      className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-xs font-bold text-white shadow-md transition"
+                    >
+                      <Zap className="w-3.5 h-3.5" />
+                      <span>Test Katha Plus Gateway</span>
+                    </button>
+                  )}
                   <button
                     disabled={currentStepIndex === 0}
                     onClick={handlePrev}
@@ -561,6 +594,15 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                     <li>• Who Responded To You</li>
                     <li>• Home District Spotlight</li>
                   </ul>
+                  {onOpenKathaPlus && (
+                    <button
+                      onClick={onOpenKathaPlus}
+                      className="mt-3 w-full flex items-center justify-center space-x-1.5 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-bold text-xs shadow-sm transition"
+                    >
+                      <Zap className="w-3.5 h-3.5" />
+                      <span>Test PayHere Checkout</span>
+                    </button>
+                  )}
                 </div>
 
                 <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">

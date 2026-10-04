@@ -262,6 +262,15 @@ class MatchingService:
                 suggested_starters=starters,
             ))
 
-        # Order by compatibility score descending
-        scored_profiles.sort(key=lambda x: x.compatibility_score, reverse=True)
+        # Order by spotlight priority then compatibility score descending
+        def calculate_sort_priority(dp: DiscoveryProfile):
+            spotlight = getattr(dp.profile, "spotlight_district", None)
+            is_spotlight = 0
+            if spotlight:
+                if (city_filter and city_filter != "all" and city_filter.lower() in spotlight.lower()) or \
+                   (current_profile.city and current_profile.city.lower() in spotlight.lower()):
+                    is_spotlight = 1
+            return (is_spotlight, dp.compatibility_score)
+
+        scored_profiles.sort(key=calculate_sort_priority, reverse=True)
         return scored_profiles[:limit]

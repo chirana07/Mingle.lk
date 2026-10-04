@@ -14,6 +14,7 @@ import {
   User,
   BarChart3,
   Presentation,
+  Crown,
 } from "lucide-react";
 
 interface HeaderProps {
@@ -24,6 +25,7 @@ interface HeaderProps {
   onQuickAdminLogin: () => void;
   onLogout: () => void;
   onOpenAuth: () => void;
+  onOpenKathaPlus?: () => void;
   currentTab?: NavTab;
   onTabChange?: (tab: NavTab) => void;
   onTogglePitchDrawer?: () => void;
@@ -40,6 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
   onQuickAdminLogin,
   onLogout,
   onOpenAuth,
+  onOpenKathaPlus,
   currentTab = "discover",
   onTabChange,
   onTogglePitchDrawer,
@@ -156,6 +159,18 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Actions */}
         <div className="flex items-center space-x-2">
+          {/* Katha Plus Micro-Pass Button */}
+          {onOpenKathaPlus && (
+            <button
+              onClick={onOpenKathaPlus}
+              className="flex items-center space-x-1 text-xs font-bold px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-slate-950 transition shadow-sm cursor-pointer"
+              title="Katha Plus LKR Micro-Subscription"
+            >
+              <Crown className="w-3.5 h-3.5 text-slate-950 stroke-[2.5]" />
+              <span className="hidden sm:inline">Katha Plus</span>
+            </button>
+          )}
+
           {/* Investor Pitch Tour Launcher */}
           {onTogglePitchDrawer && (
             <button

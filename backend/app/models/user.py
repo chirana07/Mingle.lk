@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Integer, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 import enum
 from backend.app.models.base import TimeStampedModel
@@ -50,11 +50,19 @@ class User(TimeStampedModel):
     is_selfie_verified = Column(Boolean, default=False, nullable=False)
     is_profile_completed = Column(Boolean, default=False, nullable=False)
 
+    # Katha Plus Micro-Subscription Entitlements (Issue #4)
+    is_katha_plus = Column(Boolean, default=False, nullable=False)
+    subscription_tier = Column(String(50), default="free", nullable=False)
+    subscription_expires_at = Column(DateTime, nullable=True)
+    spotlight_district = Column(String(50), nullable=True)
+    extra_cards_count = Column(Integer, default=0, nullable=False)
+
     # Relationships
     profile = relationship("Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     verifications = relationship("Verification", back_populates="user", cascade="all, delete-orphan")
     sent_connections = relationship("ConnectionRequest", foreign_keys="ConnectionRequest.sender_id", back_populates="sender")
     received_connections = relationship("ConnectionRequest", foreign_keys="ConnectionRequest.receiver_id", back_populates="receiver")
+    subscriptions = relationship("Subscription", back_populates="user", cascade="all, delete-orphan")
 
 
 class Verification(TimeStampedModel):

@@ -15,6 +15,10 @@ import {
   LogOut,
   Check,
   Mic,
+  Crown,
+  Eye,
+  Zap,
+  ChevronRight,
 } from "lucide-react";
 
 interface ProfileViewProps {
@@ -24,6 +28,8 @@ interface ProfileViewProps {
   onSaveCardAnswer: (cardId: string, optionKey: string) => Promise<void>;
   onUpdatePrivacy: (discoveryEnabled: boolean, showNeighborhoodOnly: boolean) => Promise<void>;
   onLogout: () => void;
+  onOpenKathaPlus?: () => void;
+  onOpenResponders?: () => void;
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
@@ -33,6 +39,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   onSaveCardAnswer,
   onUpdatePrivacy,
   onLogout,
+  onOpenKathaPlus,
+  onOpenResponders,
 }) => {
   const [discoveryEnabled, setDiscoveryEnabled] = useState(true);
   const [neighborhoodOnly, setNeighborhoodOnly] = useState(true);
@@ -138,6 +146,68 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </p>
           )}
         </div>
+      </div>
+
+      {/* Katha Plus Membership & Entitlements (Issue #4) */}
+      <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-slate-900 border border-amber-500/30 rounded-3xl p-4 shadow-xl space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold">
+              <Crown className="w-4 h-4 text-amber-400 stroke-[2.5]" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-1.5">
+                <h3 className="font-bold text-sm text-white">Katha Plus</h3>
+                {profile.is_katha_plus ? (
+                  <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    Active Member
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    LKR Micro-Pass
+                  </span>
+                )}
+              </div>
+              <p className="text-slate-400 text-xs mt-0.5">
+                {profile.is_katha_plus
+                  ? `Spotlight active in ${profile.spotlight_district || "Colombo"}`
+                  : "Unlock extra cards, responder reveals & district spotlight"}
+              </p>
+            </div>
+          </div>
+
+          {onOpenKathaPlus && (
+            <button
+              onClick={onOpenKathaPlus}
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-slate-950 font-bold text-xs shadow transition cursor-pointer"
+            >
+              {profile.is_katha_plus ? "Manage" : "Upgrade"}
+            </button>
+          )}
+        </div>
+
+        {/* View Who Responded To Cards CTA */}
+        {onOpenResponders && (
+          <div
+            onClick={onOpenResponders}
+            className="p-3 bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 rounded-2xl flex items-center justify-between cursor-pointer transition"
+          >
+            <div className="flex items-center space-x-2.5">
+              <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-300 flex items-center justify-center">
+                <Eye className="w-3.5 h-3.5" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-white block">Card Responders</span>
+                <span className="text-[11px] text-slate-400">
+                  {profile.is_katha_plus
+                    ? "See who answered your Connection Cards"
+                    : "Responders waiting • Unlock to reveal profiles"}
+                </span>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+          </div>
+        )}
       </div>
 
       {/* 15-Second Voice Intro Section (Issue #1) */}

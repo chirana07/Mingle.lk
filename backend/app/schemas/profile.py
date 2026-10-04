@@ -104,3 +104,7 @@ class ProfileResponse(ProfileBase):
     voice_prompt_key: Optional[str] = None
     voice_prompt_title: Optional[str] = None
     voice_intro_duration: Optional[int] = 15
+
+    # Katha Plus (Issue #4)
+    is_katha_plus: bool = False
+    spotlight_district: Optional[str] = None

@@ -61,6 +61,19 @@ async def init_db():
                 for col_name, stmt in alter_statements:
                     if col_name not in cols:
                         connection.exec_driver_sql(stmt)
+
+                user_res = connection.exec_driver_sql("PRAGMA table_info(users)").fetchall()
+                user_cols = [r[1] for r in user_res]
+                user_alter_statements = [
+                    ("is_katha_plus", "ALTER TABLE users ADD COLUMN is_katha_plus BOOLEAN DEFAULT 0"),
+                    ("subscription_tier", "ALTER TABLE users ADD COLUMN subscription_tier TEXT DEFAULT 'free'"),
+                    ("subscription_expires_at", "ALTER TABLE users ADD COLUMN subscription_expires_at TIMESTAMP"),
+                    ("spotlight_district", "ALTER TABLE users ADD COLUMN spotlight_district TEXT"),
+                    ("extra_cards_count", "ALTER TABLE users ADD COLUMN extra_cards_count INTEGER DEFAULT 0"),
+                ]
+                for col_name, stmt in user_alter_statements:
+                    if col_name not in user_cols:
+                        connection.exec_driver_sql(stmt)
             except Exception:
                 pass
 

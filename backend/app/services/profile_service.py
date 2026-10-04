@@ -55,6 +55,8 @@ class ProfileService:
             voice_prompt_key=profile.voice_prompt_key,
             voice_prompt_title=profile.voice_prompt_title,
             voice_intro_duration=profile.voice_intro_duration or 15,
+            is_katha_plus=getattr(user, "is_katha_plus", False) if user else False,
+            spotlight_district=getattr(user, "spotlight_district", None) if user else None,
         )
 
     @staticmethod

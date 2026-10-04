@@ -42,6 +42,9 @@ export interface UserProfile {
   voice_prompt_key?: string;
   voice_prompt_title?: string;
   voice_intro_duration?: number;
+  // Katha Plus (Issue #4)
+  is_katha_plus?: boolean;
+  spotlight_district?: string;
 }
 
 export interface DiscoveryFilters {
@@ -167,4 +170,63 @@ export interface AdminMetrics {
   match_to_conversation_rate: number;
   conversation_to_date_rate: number;
   safety_incident_rate: number;
+}
+
+// --- Katha Plus & Subscriptions (Issue #4) ---
+export interface SubscriptionPlanItem {
+  id: string;
+  name: string;
+  billing_cycle: string;
+  duration_days: number;
+  price_lkr: number;
+  formatted_price: string;
+  is_popular: boolean;
+  description: string;
+  perks: string[];
+  payment_methods: string[];
+}
+
+export interface SubscriptionStatus {
+  is_katha_plus: boolean;
+  subscription_tier: string;
+  subscription_expires_at?: string;
+  spotlight_district?: string;
+  extra_cards_count: number;
+  days_remaining?: number;
+  active_plan_name?: string;
+  entitlements: string[];
+}
+
+export interface PayHereCheckoutParams {
+  action_url: string;
+  merchant_id: string;
+  order_id: string;
+  items: string;
+  currency: string;
+  amount: string;
+  hash: string;
+  return_url: string;
+  cancel_url: string;
+  notify_url: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  city: string;
+  country: string;
+}
+
+export interface CardResponderItem {
+  id: string;
+  card_id: string;
+  card_question: string;
+  my_answer_key: string;
+  my_answer_label: string;
+  responder_answer_key: string;
+  responder_answer_label: string;
+  responded_at: string;
+  is_locked: boolean;
+  is_identical_choice: boolean;
+  responder_profile?: UserProfile;
+  locked_teaser?: string;
 }
