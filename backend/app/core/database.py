@@ -47,3 +47,22 @@ async def init_db():
     """Initializes tables on startup"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        
+        def migrate_sqlite_columns(connection):
+            try:
+                res = connection.exec_driver_sql("PRAGMA table_info(profiles)").fetchall()
+                cols = [r[1] for r in res]
+                alter_statements = [
+                    ("voice_intro_url", "ALTER TABLE profiles ADD COLUMN voice_intro_url TEXT"),
+                    ("voice_prompt_key", "ALTER TABLE profiles ADD COLUMN voice_prompt_key TEXT"),
+                    ("voice_prompt_title", "ALTER TABLE profiles ADD COLUMN voice_prompt_title TEXT"),
+                    ("voice_intro_duration", "ALTER TABLE profiles ADD COLUMN voice_intro_duration INTEGER DEFAULT 15"),
+                ]
+                for col_name, stmt in alter_statements:
+                    if col_name not in cols:
+                        connection.exec_driver_sql(stmt)
+            except Exception:
+                pass
+
+        if is_sqlite:
+            await conn.run_sync(migrate_sqlite_columns)

@@ -29,6 +29,12 @@ class Profile(TimeStampedModel):
     interests = Column(JSON, default=list, nullable=False)  # e.g. ["Coffee", "Surfing", "Literature", "Cricket", "Kottu Spots"]
     languages = Column(JSON, default=list, nullable=False)  # e.g. ["English", "Sinhala"]
     
+    # Voice Intro (Issue #1)
+    voice_intro_url = Column(String(1024), nullable=True)
+    voice_prompt_key = Column(String(64), nullable=True)
+    voice_prompt_title = Column(String(128), nullable=True)
+    voice_intro_duration = Column(Integer, default=15, nullable=True)
+    
     # Relationships
     user = relationship("User", back_populates="profile")
     photos = relationship("ProfilePhoto", back_populates="profile", cascade="all, delete-orphan", order_by="ProfilePhoto.order_index")

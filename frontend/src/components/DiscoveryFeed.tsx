@@ -4,22 +4,19 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { DiscoveryProfileItem } from "@/lib/types";
+import { DiscoveryFilterDrawer } from "@/components/DiscoveryFilterDrawer";
+import { VoicePromptCard } from "@/components/VoicePromptCard";
 import {
   MapPin,
   Sparkles,
   ShieldCheck,
-  CheckCircle2,
   Heart,
-  MessageCircle,
-  Filter,
   Send,
   X,
   Briefcase,
-  ChevronDown,
   Info,
-  Flame,
-  ArrowRight,
   Compass,
+  SlidersHorizontal,
 } from "lucide-react";
 
 interface DiscoveryFeedProps {
@@ -36,6 +33,9 @@ interface DiscoveryFeedProps {
   onCityChange: (city: string) => void;
   selectedIntent: string;
   onIntentChange: (intent: string) => void;
+  selectedLifestyle?: string;
+  onLifestyleChange?: (lifestyle: string) => void;
+  onResetFilters?: () => void;
   onRefresh: () => void;
 }
 
@@ -47,13 +47,15 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
   onCityChange,
   selectedIntent,
   onIntentChange,
+  selectedLifestyle = "all",
+  onLifestyleChange,
+  onResetFilters,
   onRefresh,
 }) => {
-  // Active Profile Modal for Deep Story / Inspection
   const [detailProfile, setDetailProfile] = useState<DiscoveryProfileItem | null>(null);
-
-  // Connect Modal state
   const [connectProfile, setConnectProfile] = useState<DiscoveryProfileItem | null>(null);
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+
   const [selectedAnchor, setSelectedAnchor] = useState<{
     type: "card" | "prompt" | "general";
     cardId?: string;
@@ -64,7 +66,6 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sentSuccessId, setSentSuccessId] = useState<string | null>(null);
 
-  // Hidden/Passed profile IDs in session
   const [passedProfileIds, setPassedProfileIds] = useState<Set<string>>(new Set());
 
   const visibleProfiles = profiles.filter((p) => !passedProfileIds.has(p.profile.user_id));
@@ -121,48 +122,51 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
 
   return (
     <div className="pb-24 pt-2 px-3 sm:px-4 max-w-xl mx-auto w-full">
-      {/* City & Intent Filter Pills */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-3 pt-1 scrollbar-none">
-        {[
-          { label: "All Lanka", value: "all" },
-          { label: "Colombo", value: "Colombo" },
-          { label: "Kandy", value: "Kandy" },
-          { label: "Galle", value: "Galle" },
-          { label: "Negombo", value: "Negombo" },
-        ].map((c) => (
-          <button
-            key={c.value}
-            onClick={() => onCityChange(c.value)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shadow-sm ${
-              selectedCity === c.value
-                ? "bg-rose-500 text-white shadow-rose-900/30"
-                : "bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800"
-            }`}
-          >
-            {c.label}
-          </button>
-        ))}
+      {/* Top Filter Bar with Slide-over Drawer Trigger & Active Tags (Issue #2) */}
+      <div className="flex items-center space-x-2 pb-3 pt-1">
+        <button
+          onClick={() => setIsFilterDrawerOpen(true)}
+          className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-rose-900/30 hover:opacity-95 transition shrink-0"
+        >
+          <SlidersHorizontal className="w-3.5 h-3.5" />
+          <span>Filters</span>
+          {(selectedCity !== "all" || selectedIntent !== "all" || selectedLifestyle !== "all") && (
+            <span className="w-2 h-2 rounded-full bg-white" />
+          )}
+        </button>
 
-        <div className="h-4 w-px bg-slate-800 shrink-0" />
+        {/* Active Filter Pill Tags */}
+        <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-1">
+          {selectedCity !== "all" && (
+            <span className="px-2.5 py-1 rounded-full bg-slate-800 text-rose-300 border border-rose-500/30 text-xs font-semibold flex items-center space-x-1 shrink-0">
+              <span>{selectedCity}</span>
+              <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => onCityChange("all")} />
+            </span>
+          )}
 
-        {[
-          { label: "All Vibes", value: "all" },
-          { label: "Intentional Dating", value: "Intentional dating" },
-          { label: "Long-term", value: "Long-term with marriage mindset" },
-          { label: "Exploring", value: "Open to exploring" },
-        ].map((i) => (
-          <button
-            key={i.value}
-            onClick={() => onIntentChange(i.value)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shadow-sm ${
-              selectedIntent === i.value
-                ? "bg-amber-500 text-slate-950 font-bold shadow-amber-900/30"
-                : "bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800"
-            }`}
-          >
-            {i.label}
-          </button>
-        ))}
+          {selectedIntent !== "all" && (
+            <span className="px-2.5 py-1 rounded-full bg-slate-800 text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center space-x-1 shrink-0">
+              <span className="truncate max-w-[120px]">{selectedIntent}</span>
+              <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => onIntentChange("all")} />
+            </span>
+          )}
+
+          {selectedLifestyle !== "all" && (
+            <span className="px-2.5 py-1 rounded-full bg-slate-800 text-sky-300 border border-sky-500/30 text-xs font-semibold flex items-center space-x-1 shrink-0">
+              <span className="truncate max-w-[120px]">{selectedLifestyle}</span>
+              <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => onLifestyleChange?.("all")} />
+            </span>
+          )}
+
+          {(selectedCity !== "all" || selectedIntent !== "all" || selectedLifestyle !== "all") && (
+            <button
+              onClick={() => onResetFilters?.()}
+              className="text-[11px] text-slate-400 hover:text-white underline shrink-0 px-1"
+            >
+              Clear All
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Discovery Feed Profiles */}
@@ -183,8 +187,7 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
           <button
             onClick={() => {
               setPassedProfileIds(new Set());
-              onCityChange("all");
-              onIntentChange("all");
+              onResetFilters?.();
             }}
             className="text-xs bg-rose-500 hover:bg-rose-600 text-white font-semibold px-5 py-2.5 rounded-xl transition shadow-lg shadow-rose-950/40"
           >
@@ -201,7 +204,6 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
               "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80";
             const isAlreadySent = sentSuccessId === p.user_id;
 
-            // Highlight: Top connection card comparison if identical or top match reason
             const topCard = item.card_comparisons[0];
             const topReason = item.match_reasons[0];
 
@@ -213,10 +215,10 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                 transition={{ duration: 0.3, delay: Math.min(idx * 0.05, 0.2) }}
                 className="group relative bg-slate-900 border border-slate-800/90 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 hover:border-slate-700/80"
               >
-                {/* Clean Photo Hero */}
+                {/* Photo Hero */}
                 <div
                   onClick={() => setDetailProfile(item)}
-                  className="relative h-[440px] sm:h-[480px] w-full cursor-pointer overflow-hidden bg-slate-950"
+                  className="relative h-[420px] sm:h-[460px] w-full cursor-pointer overflow-hidden bg-slate-950"
                 >
                   <img
                     src={primaryPhoto}
@@ -224,7 +226,6 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                     className="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500"
                     loading="lazy"
                   />
-                  {/* Subtle Cinematic Vignette */}
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
 
                   {/* Top Badges */}
@@ -243,7 +244,7 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                     </div>
                   </div>
 
-                  {/* Identity & Glanceable Info at Bottom of Image */}
+                  {/* Identity at Bottom of Image */}
                   <div className="absolute bottom-4 inset-x-4 z-10">
                     <div className="flex items-baseline space-x-2">
                       <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight drop-shadow-md">
@@ -256,10 +257,10 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
 
                     <div className="flex items-center space-x-1.5 text-slate-200 text-xs mt-1 drop-shadow">
                       <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                      <span className="font-medium">{p.neighborhood}</span>
+                      <span className="font-medium">{p.neighborhood || p.city}</span>
                     </div>
 
-                    {/* Quick Clean Pills */}
+                    {/* Quick Pills */}
                     <div className="flex flex-wrap gap-1.5 mt-2.5">
                       {p.occupation && (
                         <span className="px-2.5 py-1 rounded-xl bg-slate-950/75 backdrop-blur-md text-xs font-medium text-slate-200 border border-white/10 flex items-center space-x-1">
@@ -272,7 +273,7 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                       </span>
                     </div>
 
-                    {/* Single Highlight Hook Pill */}
+                    {/* Connection Hook */}
                     {topCard ? (
                       <div className="mt-3 p-2.5 rounded-2xl bg-slate-950/80 backdrop-blur-md border border-slate-800 flex items-center justify-between text-xs">
                         <div className="flex items-center space-x-2 truncate pr-2">
@@ -299,9 +300,17 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                   </div>
                 </div>
 
-                {/* Streamlined Action Bar (3 Clean Buttons) */}
-                <div className="p-3 bg-slate-900 flex items-center justify-between space-x-2">
-                  {/* Pass / Skip */}
+                {/* 15s Voice Intro Preview Card on Profile (Issue #1) */}
+                <div className="p-3 bg-slate-900 border-t border-slate-800/80">
+                  <VoicePromptCard
+                    audioUrl={p.voice_intro_url}
+                    promptTitle={p.voice_prompt_title || "How to pronounce my name & what it means"}
+                    userName={p.first_name}
+                  />
+                </div>
+
+                {/* Streamlined Action Bar */}
+                <div className="p-3 bg-slate-900/90 border-t border-slate-800/60 flex items-center justify-between space-x-2">
                   <button
                     onClick={() => handlePass(p.user_id)}
                     className="p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-400 hover:text-slate-200 border border-slate-700/50 transition-all active:scale-95"
@@ -310,7 +319,6 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                     <X className="w-5 h-5" />
                   </button>
 
-                  {/* View Details / Story */}
                   <button
                     onClick={() => setDetailProfile(item)}
                     className="flex-1 py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white font-semibold text-xs border border-slate-700/70 transition-all flex items-center justify-center space-x-1.5 active:scale-98"
@@ -319,15 +327,13 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                     <span>View Story & Cards</span>
                   </button>
 
-                  {/* Connect */}
                   <button
                     disabled={isAlreadySent}
                     onClick={() => handleOpenConnect(item)}
-                    className={`py-3 px-5 rounded-2xl font-bold text-xs shadow-lg transition-all flex items-center justify-center space-x-1.5 active:scale-95 ${
-                      isAlreadySent
+                    className={`py-3 px-5 rounded-2xl font-bold text-xs shadow-lg transition-all flex items-center justify-center space-x-1.5 active:scale-95 ${isAlreadySent
                         ? "bg-slate-800 text-emerald-400 border border-emerald-500/40 cursor-default"
                         : "bg-gradient-to-r from-rose-500 to-amber-500 hover:opacity-95 text-white shadow-rose-900/40"
-                    }`}
+                      }`}
                   >
                     <Heart className="w-4 h-4 fill-current" />
                     <span>{isAlreadySent ? "Sent" : "Connect"}</span>
@@ -339,7 +345,21 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
         </div>
       )}
 
-      {/* Progressive Disclosure: Full Profile & Story Sheet */}
+      {/* Slide-over Filter Drawer (Issue #2) */}
+      <DiscoveryFilterDrawer
+        isOpen={isFilterDrawerOpen}
+        onClose={() => setIsFilterDrawerOpen(false)}
+        selectedDistrict={selectedCity}
+        onDistrictChange={onCityChange}
+        selectedIntent={selectedIntent}
+        onIntentChange={onIntentChange}
+        selectedLifestyle={selectedLifestyle}
+        onLifestyleChange={onLifestyleChange || (() => { })}
+        onResetAll={() => onResetFilters?.()}
+        onApply={onRefresh}
+      />
+
+      {/* Full Profile & Story Sheet */}
       <AnimatePresence>
         {detailProfile && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
@@ -350,7 +370,6 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto text-white p-5 shadow-2xl relative"
             >
-              {/* Close Button */}
               <button
                 onClick={() => setDetailProfile(null)}
                 className="absolute top-4 right-4 p-2 rounded-full bg-slate-800/90 text-slate-400 hover:text-white z-10"
@@ -358,7 +377,6 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                 <X className="w-5 h-5" />
               </button>
 
-              {/* Photo & Header */}
               <div className="relative h-64 rounded-2xl overflow-hidden mb-4 bg-slate-950">
                 <img
                   src={
@@ -375,9 +393,18 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                   </h3>
                   <p className="text-xs text-slate-300 flex items-center space-x-1 mt-0.5">
                     <MapPin className="w-3.5 h-3.5 text-rose-400" />
-                    <span>{detailProfile.profile.neighborhood}</span>
+                    <span>{detailProfile.profile.neighborhood || detailProfile.profile.city}</span>
                   </p>
                 </div>
+              </div>
+
+              {/* Voice Intro in Modal */}
+              <div className="mb-4">
+                <VoicePromptCard
+                  audioUrl={detailProfile.profile.voice_intro_url}
+                  promptTitle={detailProfile.profile.voice_prompt_title || "How to pronounce my name & what it means"}
+                  userName={detailProfile.profile.first_name}
+                />
               </div>
 
               {/* Bio */}
@@ -392,7 +419,7 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                 </div>
               )}
 
-              {/* Explainable Match Reasons */}
+              {/* Match Reasons */}
               {detailProfile.match_reasons.length > 0 && (
                 <div className="bg-gradient-to-br from-rose-950/20 to-amber-950/20 border border-rose-900/30 rounded-2xl p-4 mb-4">
                   <div className="flex items-center space-x-1.5 text-rose-300 text-xs font-semibold mb-2">
@@ -407,62 +434,6 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                       </li>
                     ))}
                   </ul>
-                </div>
-              )}
-
-              {/* Connection Cards */}
-              {detailProfile.card_comparisons.length > 0 && (
-                <div className="space-y-2 mb-4">
-                  <span className="text-xs font-bold text-slate-200 block">
-                    Interactive Connection Cards (Tap to Reply)
-                  </span>
-                  {detailProfile.card_comparisons.map((c) => (
-                    <div
-                      key={c.card_id}
-                      onClick={() =>
-                        handleOpenConnect(detailProfile, {
-                          type: "card",
-                          cardId: c.card_id,
-                          cardKey: c.user_choice_key,
-                          label: c.question,
-                        })
-                      }
-                      className={`p-3 rounded-2xl border cursor-pointer transition hover:scale-[1.01] ${
-                        c.is_identical
-                          ? "bg-emerald-950/30 border-emerald-600/40 hover:border-emerald-500"
-                          : "bg-slate-800/70 border-slate-700/60 hover:border-slate-600"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="font-semibold text-white">{c.question}</span>
-                        {c.is_identical && (
-                          <span className="text-[10px] font-bold text-emerald-400">
-                            Same Answer ✨
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-300">
-                        They chose: <strong className="text-rose-300">{c.target_choice_label}</strong>
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Passions & Interests */}
-              {detailProfile.profile.interests.length > 0 && (
-                <div className="mb-4">
-                  <span className="text-xs font-bold text-slate-200 block mb-2">Passions & Hobbies</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {detailProfile.profile.interests.map((tag, i) => (
-                      <span
-                        key={i}
-                        className="px-2.5 py-1 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-xs font-medium"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
                 </div>
               )}
 

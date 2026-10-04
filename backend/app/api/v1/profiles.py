@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.core.database import get_db
 from backend.app.api.deps import get_current_user
 from backend.app.models.user import User
-from backend.app.schemas.profile import ProfileCreate, ProfileResponse, ProfileUpdate, PrivacyUpdate
+from backend.app.schemas.profile import ProfileCreate, ProfileResponse, ProfileUpdate, PrivacyUpdate, VoicePromptUpdate
 from backend.app.services.profile_service import ProfileService
 
 router = APIRouter(prefix="/profiles", tags=["Profiles"])
@@ -28,6 +28,26 @@ async def create_or_update_my_profile(
 ):
     """Create or update full conversational profile, photos, and prompts"""
     return await ProfileService.create_or_update_profile(db, current_user.id, data)
+
+
+@router.post("/me/voice-prompt", response_model=ProfileResponse)
+async def update_my_voice_prompt(
+    data: VoicePromptUpdate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Save or update user's 15-second voice intro snippet (Issue #1)"""
+    updated = await ProfileService.save_voice_prompt(
+        db=db,
+        user_id=current_user.id,
+        voice_url=data.voice_intro_url,
+        prompt_key=data.voice_prompt_key,
+        prompt_title=data.voice_prompt_title,
+        duration=data.voice_intro_duration,
+    )
+    if not updated:
+        raise HTTPException(status_code=404, detail="Profile not found.")
+    return updated
 
 
 @router.get("/{user_id}", response_model=ProfileResponse)

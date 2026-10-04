@@ -26,6 +26,13 @@ class PromptAnswerResponse(PromptAnswerCreate):
     id: str
 
 
+class VoicePromptUpdate(BaseModel):
+    voice_intro_url: str
+    voice_prompt_key: Optional[str] = "pronunciation"
+    voice_prompt_title: Optional[str] = "How to pronounce my name & what it means"
+    voice_intro_duration: Optional[int] = 15
+
+
 class ProfileBase(BaseModel):
     first_name: str = Field(..., min_length=2, max_length=50)
     birth_date: date
@@ -41,6 +48,12 @@ class ProfileBase(BaseModel):
     lifestyle_pace: str = Field("Cafe explorer & beach sunsets")
     interests: List[str] = Field(default_factory=list)
     languages: List[str] = Field(default_factory=lambda: ["English", "Sinhala"])
+    
+    # Voice Intro (Issue #1)
+    voice_intro_url: Optional[str] = None
+    voice_prompt_key: Optional[str] = None
+    voice_prompt_title: Optional[str] = None
+    voice_intro_duration: Optional[int] = 15
 
 
 class ProfileCreate(ProfileBase):
@@ -60,6 +73,10 @@ class ProfileUpdate(BaseModel):
     lifestyle_pace: Optional[str] = None
     interests: Optional[List[str]] = None
     languages: Optional[List[str]] = None
+    voice_intro_url: Optional[str] = None
+    voice_prompt_key: Optional[str] = None
+    voice_prompt_title: Optional[str] = None
+    voice_intro_duration: Optional[int] = None
 
 
 class PrivacyUpdate(BaseModel):
@@ -68,7 +85,6 @@ class PrivacyUpdate(BaseModel):
 
 
 class ProfileResponse(ProfileBase):
-
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -82,3 +98,9 @@ class ProfileResponse(ProfileBase):
     is_email_verified: bool = False
     is_selfie_verified: bool = False
     is_profile_completed: bool = False
+
+    # Voice Intro
+    voice_intro_url: Optional[str] = None
+    voice_prompt_key: Optional[str] = None
+    voice_prompt_title: Optional[str] = None
+    voice_intro_duration: Optional[int] = 15

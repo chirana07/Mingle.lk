@@ -2,20 +2,19 @@
 
 import React, { useState } from "react";
 import { UserProfile, ConnectionCard } from "@/lib/types";
+import { VoicePromptCard } from "@/components/VoicePromptCard";
+import { VoicePromptRecorderModal } from "@/components/VoicePromptRecorderModal";
+import { api } from "@/lib/api";
 import {
-  User,
   ShieldCheck,
   CheckCircle2,
   MapPin,
   Briefcase,
-  Heart,
-  Sliders,
   Sparkles,
   Lock,
-  Languages,
   LogOut,
-  Camera,
   Check,
+  Mic,
 } from "lucide-react";
 
 interface ProfileViewProps {
@@ -39,6 +38,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const [neighborhoodOnly, setNeighborhoodOnly] = useState(true);
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const [savingCardId, setSavingCardId] = useState<string | null>(null);
+  const [isRecorderOpen, setIsRecorderOpen] = useState(false);
 
   if (!profile) {
     return (
@@ -48,7 +48,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     );
   }
 
-  const primaryPhoto = profile.photos[0]?.url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80";
+  const primaryPhoto =
+    profile.photos[0]?.url ||
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80";
 
   const handleSelectCardOption = async (cardId: string, optionKey: string) => {
     setSavingCardId(cardId);
@@ -70,6 +72,17 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const handleToggleNeighborhood = async (val: boolean) => {
     setNeighborhoodOnly(val);
     await onUpdatePrivacy(discoveryEnabled, val);
+  };
+
+  const handleSaveVoice = async (url: string, key: string, title: string) => {
+    await api.saveVoicePrompt({
+      voice_intro_url: url,
+      voice_prompt_key: key,
+      voice_prompt_title: title,
+    });
+    profile.voice_intro_url = url;
+    profile.voice_prompt_key = key;
+    profile.voice_prompt_title = title;
   };
 
   return (
@@ -104,7 +117,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
           <div className="flex items-center space-x-1.5 text-xs text-slate-300">
             <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-            <span>{profile.neighborhood}</span>
+            <span>{profile.neighborhood || profile.city}</span>
           </div>
 
           <div className="flex flex-wrap gap-1.5 pt-1">
@@ -126,6 +139,34 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           )}
         </div>
       </div>
+
+      {/* 15-Second Voice Intro Section (Issue #1) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-lg space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-rose-400">
+            <Mic className="w-4 h-4" />
+            <h3 className="font-bold text-sm text-white">15s Voice Intro</h3>
+          </div>
+          <button
+            onClick={() => setIsRecorderOpen(true)}
+            className="text-[11px] text-rose-400 hover:text-rose-300 font-semibold underline"
+          >
+            {profile.voice_intro_url ? "Re-record" : "Record Voice"}
+          </button>
+        </div>
+
+        <VoicePromptCard
+          audioUrl={profile.voice_intro_url}
+          promptTitle={profile.voice_prompt_title || "How to pronounce my name & what it means"}
+          userName={profile.first_name}
+        />
+      </div>
+
+      <VoicePromptRecorderModal
+        isOpen={isRecorderOpen}
+        onClose={() => setIsRecorderOpen(false)}
+        onSaveVoiceIntro={handleSaveVoice}
+      />
 
       {/* Privacy & Discovery Controls */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-lg space-y-3">
@@ -195,14 +236,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   </span>
                 </div>
 
-                {/* Current Choice */}
                 {!isEditing && (
                   <div className="mt-2 text-xs text-emerald-300 font-medium bg-slate-900/60 p-2 rounded-xl border border-slate-800">
                     Selected: {answer?.selected_option_label || "Not answered yet"}
                   </div>
                 )}
 
-                {/* Options selector when editing */}
                 {isEditing && (
                   <div className="mt-3 space-y-1.5 pt-2 border-t border-slate-700">
                     {card.options.map((opt) => (
@@ -210,11 +249,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                         key={opt.key}
                         disabled={savingCardId === card.id}
                         onClick={() => handleSelectCardOption(card.id, opt.key)}
-                        className={`w-full text-left p-2 rounded-xl text-xs flex items-center justify-between transition ${
-                          answer?.selected_option_key === opt.key
-                            ? "bg-rose-600 text-white font-semibold"
-                            : "bg-slate-900 text-slate-300 hover:bg-slate-700"
-                        }`}
+                        className={`w-full text-left p-2 rounded-xl text-xs flex items-center justify-between transition ${answer?.selected_option_key === opt.key
+                          ? "bg-rose-600 text-white font-semibold"
+                          : "bg-slate-900 text-slate-300 hover:bg-slate-700"
+                          }`}
                       >
                         <span>{opt.emoji} {opt.label}</span>
                         {answer?.selected_option_key === opt.key && <Check className="w-3.5 h-3.5" />}

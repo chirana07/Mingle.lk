@@ -37,6 +37,18 @@ export interface UserProfile {
   is_email_verified: boolean;
   is_selfie_verified: boolean;
   is_profile_completed: boolean;
+  // Voice Intro (Issue #1)
+  voice_intro_url?: string;
+  voice_prompt_key?: string;
+  voice_prompt_title?: string;
+  voice_intro_duration?: number;
+}
+
+export interface DiscoveryFilters {
+  district?: string;
+  city?: string;
+  intent?: string;
+  lifestyle_pace?: string;
 }
 
 export interface CardOption {

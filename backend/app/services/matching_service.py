@@ -61,7 +61,6 @@ class MatchingService:
                 target_choice = target_cards[card_id]
                 card_meta = cards_metadata.get(card_id)
                 
-                # Find labels
                 user_label = user_choice
                 target_label = target_choice
                 card_question = card_meta.question if card_meta else "Connection Question"
@@ -98,54 +97,45 @@ class MatchingService:
         else:
             card_score = 0.5  # Neutral default if no shared cards answered yet
 
-        # 4. Shared Interests (Weight: 15%)
-        user_interests = set(current_profile.interests or [])
-        target_interests = set(target_profile.interests or [])
-        shared_interests = list(user_interests.intersection(target_interests))
+        # 4. Shared Passions & Interests (Weight: 20%)
+        curr_ints = set(current_profile.interests or [])
+        target_ints = set(target_profile.interests or [])
+        shared_interests = list(curr_ints.intersection(target_ints))
         
-        interest_score = min(1.0, len(shared_interests) / 3.0) if user_interests else 0.5
-        if shared_interests:
-            reasons.append(f"{len(shared_interests)} shared passions: {', '.join(shared_interests[:3])}")
-            starters.append(f"I noticed we both love {shared_interests[0]}! What's your favourite experience with that in Sri Lanka?")
-
-        # 5. Communication Style (Weight: 10%)
-        comm_score = 0.0
-        if current_profile.communication_style == target_profile.communication_style:
-            comm_score = 1.0
-            reasons.append(f"Same communication pace: {current_profile.communication_style}")
+        interest_score = 0.0
+        if len(curr_ints) > 0:
+            interest_score = min(1.0, len(shared_interests) / min(3, len(curr_ints)))
+            if shared_interests:
+                reasons.append(f"Shared passions including {', '.join(shared_interests)}")
         else:
-            comm_score = 0.5
+            interest_score = 0.5
 
-        # 6. Location / Neighborhood Proximity (Weight: 10%)
-        loc_score = 0.0
-        if current_profile.city == target_profile.city:
-            if current_profile.neighborhood == target_profile.neighborhood:
-                loc_score = 1.0
+        # 5. Sri Lankan Location Proximity (Weight: 15%)
+        location_score = 0.5
+        if current_profile.city.lower() == target_profile.city.lower():
+            location_score = 1.0
+            if current_profile.neighborhood.lower() == target_profile.neighborhood.lower():
                 reasons.append(f"Same local neighborhood: {current_profile.neighborhood}")
             else:
-                loc_score = 0.8
-                reasons.append(f"Nearby in {current_profile.city}")
+                reasons.append(f"Both located in {current_profile.city}")
         else:
-            loc_score = 0.4
+            location_score = 0.4
 
-        # Weighted composite score
-        composite = (
-            (intent_score * settings.WEIGHT_INTENT) +
-            (lifestyle_score * settings.WEIGHT_LIFESTYLE) +
-            (card_score * settings.WEIGHT_CARDS) +
-            (interest_score * settings.WEIGHT_INTERESTS) +
-            (comm_score * settings.WEIGHT_COMMUNICATION) +
-            (loc_score * settings.WEIGHT_LOCATION)
+        # Weighted Total Score
+        total_score = (
+            intent_score * 0.25 +
+            lifestyle_score * 0.20 +
+            card_score * 0.20 +
+            interest_score * 0.20 +
+            location_score * 0.15
         ) * 100.0
 
-        # Ensure at least 2 conversational starters
-        if not starters:
-            starters.append(f"Hey {target_profile.first_name}, what's your favourite weekend spot around {target_profile.neighborhood}?")
-            if target_profile.prompt_answers:
-                p = target_profile.prompt_answers[0]
-                starters.append(f"Loved your answer to '{p.prompt_question}': '{p.answer_text}'. Tell me more!")
+        # High-potential conversation openers
+        if shared_interests:
+            starters.append(f"I noticed we both love {shared_interests[0]}. Have a favorite spot in Sri Lanka for that?")
+        starters.append(f"Your lifestyle note about '{target_profile.lifestyle_pace}' stood out to me!")
 
-        return round(composite, 1), reasons, shared_interests, card_comparisons, starters
+        return round(total_score, 1), reasons, shared_interests, card_comparisons, starters
 
     @staticmethod
     async def get_discovery_feed(
@@ -153,7 +143,8 @@ class MatchingService:
         current_user_id: str,
         limit: int = 20,
         city_filter: Optional[str] = None,
-        intent_filter: Optional[str] = None
+        intent_filter: Optional[str] = None,
+        lifestyle_pace_filter: Optional[str] = None
     ) -> List[DiscoveryProfile]:
         """
         Produces a curated discovery feed excluding blocked users, already connected/matched users,
@@ -214,11 +205,18 @@ class MatchingService:
             )
         )
 
-        # Optional filters
-        if city_filter:
-            query = query.where(Profile.city.ilike(f"%{city_filter}%"))
-        if intent_filter:
+        # Optional filters (District, Intent, Lifestyle Pace)
+        if city_filter and city_filter != "all":
+            query = query.where(
+                or_(
+                    Profile.city.ilike(f"%{city_filter}%"),
+                    Profile.neighborhood.ilike(f"%{city_filter}%")
+                )
+            )
+        if intent_filter and intent_filter != "all":
             query = query.where(Profile.relationship_intent == intent_filter)
+        if lifestyle_pace_filter and lifestyle_pace_filter != "all":
+            query = query.where(Profile.lifestyle_pace == lifestyle_pace_filter)
 
         # Gender preference matching
         if current_profile.looking_for_gender != "everyone":
@@ -233,7 +231,6 @@ class MatchingService:
 
         scored_profiles = []
         for candidate in candidate_profiles:
-            # Candidate's card answers
             cand_cards = {ca.card_id: ca.selected_option_key for ca in (candidate.card_answers or [])}
             
             score, reasons, shared_ints, card_comps, starters = MatchingService.calculate_compatibility(
@@ -244,27 +241,27 @@ class MatchingService:
                 cards_metadata=cards_metadata,
             )
 
-            # Categorize level
             if score >= 80:
                 level = "Very Strong Connection"
             elif score >= 65:
-                level = "High Compatibility"
+                level = "Promising Match"
+            elif score >= 50:
+                level = "Good Starting Point"
             else:
-                level = "Great Potential"
+                level = "Different Perspectives"
 
-            scored_profiles.append((
-                score,
-                DiscoveryProfile(
-                    profile=ProfileService.to_profile_response(candidate, candidate.user),
-                    compatibility_score=score,
-                    compatibility_level=level,
-                    match_reasons=reasons,
-                    shared_interests=shared_ints,
-                    card_comparisons=card_comps,
-                    suggested_starters=starters,
-                )
+            target_prof_resp = ProfileService.to_profile_response(candidate, candidate.user)
+
+            scored_profiles.append(DiscoveryProfile(
+                profile=target_prof_resp,
+                compatibility_score=score,
+                compatibility_level=level,
+                match_reasons=reasons,
+                shared_interests=shared_ints,
+                card_comparisons=card_comps,
+                suggested_starters=starters,
             ))
 
-        # Sort descending by compatibility score
-        scored_profiles.sort(key=lambda x: x[0], reverse=True)
-        return [sp[1] for sp in scored_profiles[:limit]]
+        # Order by compatibility score descending
+        scored_profiles.sort(key=lambda x: x.compatibility_score, reverse=True)
+        return scored_profiles[:limit]

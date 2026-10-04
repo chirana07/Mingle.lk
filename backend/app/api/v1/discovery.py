@@ -13,19 +13,22 @@ router = APIRouter(prefix="/discovery", tags=["Discovery Engine"])
 @router.get("", response_model=List[DiscoveryProfile])
 async def get_discovery_feed(
     city: Optional[str] = Query(None, description="Filter by city e.g. Colombo, Kandy, Galle"),
+    district: Optional[str] = Query(None, description="Filter by Sri Lankan district"),
     intent: Optional[str] = Query(None, description="Filter by relationship intent"),
+    lifestyle_pace: Optional[str] = Query(None, description="Filter by lifestyle rhythm"),
     limit: int = Query(20, ge=1, le=50),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
     """
     Get explainable discovery feed with compatibility scores, shared reasons,
-    and organic conversation openers.
+    filtered by district, relationship intent, and lifestyle pace (Issue #2).
     """
     return await MatchingService.get_discovery_feed(
         db=db,
         current_user_id=current_user.id,
         limit=limit,
-        city_filter=city,
+        city_filter=district or city,
         intent_filter=intent,
+        lifestyle_pace_filter=lifestyle_pace,
     )

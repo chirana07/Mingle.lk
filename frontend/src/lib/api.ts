@@ -117,12 +117,31 @@ class ApiClient {
     return this.request(`/profiles/${userId}`);
   }
 
+  // --- Voice Prompts (Issue #1) ---
+  async saveVoicePrompt(data: {
+    voice_intro_url: string;
+    voice_prompt_key?: string;
+    voice_prompt_title?: string;
+    voice_intro_duration?: number;
+  }): Promise<UserProfile> {
+    return this.request("/profiles/me/voice-prompt", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
 
-  // --- Discovery ---
-  async getDiscoveryFeed(city?: string, intent?: string): Promise<DiscoveryProfileItem[]> {
+  // --- Discovery (Issue #2: multi-param filtering) ---
+  async getDiscoveryFeed(filters: {
+    city?: string;
+    district?: string;
+    intent?: string;
+    lifestyle_pace?: string;
+  } = {}): Promise<DiscoveryProfileItem[]> {
     const params = new URLSearchParams();
-    if (city && city !== "all") params.append("city", city);
-    if (intent && intent !== "all") params.append("intent", intent);
+    if (filters.district && filters.district !== "all") params.append("district", filters.district);
+    else if (filters.city && filters.city !== "all") params.append("city", filters.city);
+    if (filters.intent && filters.intent !== "all") params.append("intent", filters.intent);
+    if (filters.lifestyle_pace && filters.lifestyle_pace !== "all") params.append("lifestyle_pace", filters.lifestyle_pace);
     const query = params.toString() ? `?${params.toString()}` : "";
     return this.request(`/discovery${query}`);
   }
@@ -169,6 +188,12 @@ class ApiClient {
     });
   }
 
+  async declineConnection(requestId: string): Promise<{ status: string; message: string }> {
+    return this.request(`/connections/${requestId}/decline`, {
+      method: "POST",
+    });
+  }
+
   async getMatches(): Promise<MatchItem[]> {
     return this.request("/connections/matches");
   }
@@ -208,7 +233,6 @@ class ApiClient {
     return `${wsProto}//${host}/api/v1/chat/ws/${conversationId}?token=${encodeURIComponent(token)}`;
   }
 
-
   // --- Date Mode & Safety ---
   async getDateRecommendations(city?: string, budget?: string): Promise<DateRecommendation[]> {
     const params = new URLSearchParams();
@@ -236,12 +260,6 @@ class ApiClient {
     return this.request(`/dates/match/${matchId}`);
   }
 
-  async respondDatePlan(datePlanId: string, accept: boolean): Promise<DatePlanItem> {
-    return this.request(`/dates/${datePlanId}/respond?accept=${accept}`, {
-      method: "POST",
-    });
-  }
-
   async createSafetyPlan(datePlanId: string, data: {
     trusted_contact_name: string;
     trusted_contact_phone: string;
@@ -253,28 +271,10 @@ class ApiClient {
     });
   }
 
-  async submitDateFeedback(datePlanId: string, data: {
-    met_in_person: boolean;
-    accurate_profile: boolean;
-    comfort_rating: number;
-    would_meet_again: boolean;
-    private_safety_notes?: string;
-  }): Promise<any> {
-    return this.request(`/dates/${datePlanId}/feedback`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  }
-
-  // --- Safety ---
-  async reportUser(reportedId: string, category: string, details: string): Promise<any> {
+  async reportUser(reportedId: string, category: string, details?: string): Promise<any> {
     return this.request("/safety/report", {
       method: "POST",
-      body: JSON.stringify({
-        reported_id: reportedId,
-        category,
-        details,
-      }),
+      body: JSON.stringify({ reported_id: reportedId, category, details }),
     });
   }
 

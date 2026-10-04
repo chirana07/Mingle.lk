@@ -51,6 +51,10 @@ class ProfileService:
             is_email_verified=is_email_verified,
             is_selfie_verified=is_selfie_verified,
             is_profile_completed=is_profile_completed,
+            voice_intro_url=profile.voice_intro_url,
+            voice_prompt_key=profile.voice_prompt_key,
+            voice_prompt_title=profile.voice_prompt_title,
+            voice_intro_duration=profile.voice_intro_duration or 15,
         )
 
     @staticmethod
@@ -99,6 +103,10 @@ class ProfileService:
                 lifestyle_pace=data.lifestyle_pace,
                 interests=data.interests,
                 languages=data.languages,
+                voice_intro_url=data.voice_intro_url,
+                voice_prompt_key=data.voice_prompt_key,
+                voice_prompt_title=data.voice_prompt_title,
+                voice_intro_duration=data.voice_intro_duration or 15,
             )
             db.add(profile)
             await db.flush()
@@ -117,6 +125,11 @@ class ProfileService:
             profile.lifestyle_pace = data.lifestyle_pace
             profile.interests = data.interests
             profile.languages = data.languages
+            if data.voice_intro_url is not None:
+                profile.voice_intro_url = data.voice_intro_url
+                profile.voice_prompt_key = data.voice_prompt_key
+                profile.voice_prompt_title = data.voice_prompt_title
+                profile.voice_intro_duration = data.voice_intro_duration or 15
 
         # Update photos
         if data.photos:
@@ -155,6 +168,26 @@ class ProfileService:
         await db.refresh(user)
 
         # Re-fetch with relationships loaded
+        return await ProfileService.get_profile_response_by_user_id(db, user_id)
+
+    @staticmethod
+    async def save_voice_prompt(
+        db: AsyncSession,
+        user_id: str,
+        voice_url: str,
+        prompt_key: Optional[str] = None,
+        prompt_title: Optional[str] = None,
+        duration: Optional[int] = 15
+    ) -> Optional[ProfileResponse]:
+        profile = await ProfileService.get_profile_by_user_id(db, user_id)
+        if not profile:
+            return None
+        profile.voice_intro_url = voice_url
+        profile.voice_prompt_key = prompt_key or "pronunciation"
+        profile.voice_prompt_title = prompt_title or "How to pronounce my name & what it means"
+        profile.voice_intro_duration = duration or 15
+        await db.commit()
+        await db.refresh(profile)
         return await ProfileService.get_profile_response_by_user_id(db, user_id)
 
     @staticmethod
