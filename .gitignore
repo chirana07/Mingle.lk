@@ -23,3 +23,11 @@ frontend/build/
 .env
 .DS_Store
 *.log
+
+# Agent & AI IDE Harnesses
+.gemini/
+.cursor/
+.codex/
+.claude/
+.agents/
+.impeccable/
