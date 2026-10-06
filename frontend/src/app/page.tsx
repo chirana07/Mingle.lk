@@ -12,6 +12,7 @@ import {
   ConversationSummaryItem,
   MessageItem,
 } from "@/lib/types";
+import { CalendarHeart } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Navigation, NavTab } from "@/components/Navigation";
 import { DiscoveryFeed } from "@/components/DiscoveryFeed";
@@ -295,11 +296,11 @@ export default function Home() {
   const unreadCount = conversations.reduce((acc, c) => acc + (c.unread_count || 0), 0);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col font-sans selection:bg-rose-500 selection:text-white">
+    <div className="min-h-screen bg-[#090D16] text-white flex flex-col font-sans selection:bg-rose-500 selection:text-white">
       {/* Investor Pitch Tour Desktop Callout Banner */}
       {!isPitchTourOpen && (
-        <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-amber-500/15 border-b border-amber-500/30 px-3 py-1.5 text-center text-xs flex items-center justify-center space-x-2">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/25 text-amber-300 border border-amber-500/30">
+        <div className="bg-[#0E1424] border-b border-amber-500/20 px-3.5 py-2 text-center text-xs flex items-center justify-center space-x-2.5 text-slate-300">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
             INVESTOR / ACCELERATOR PREVIEW
           </span>
           <span className="text-slate-300 hidden sm:inline text-xs">
@@ -375,16 +376,19 @@ export default function Home() {
         )}
 
         {currentTab === "dates" && (
-          <div className="flex flex-col items-center justify-center p-8 text-center min-h-[50vh]">
-            <h3 className="text-xl font-bold text-white mb-2">Curated Date Mode</h3>
-            <p className="text-slate-400 text-sm max-w-sm mb-4">
-              Explore safety-vetted Sri Lankan date spots and configure private check-ins.
+          <div className="flex flex-col items-center justify-center p-8 text-center min-h-[55vh] max-w-md mx-auto">
+            <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-4">
+              <CalendarHeart className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Curated Ceylon Date Mode</h3>
+            <p className="text-slate-400 text-xs leading-relaxed max-w-sm mb-6">
+              Explore safety-vetted Sri Lankan date spots across Colombo, Kandy, Galle Fort &amp; Weligama, with automatic check-in safety timers.
             </p>
             <button
               onClick={() => setIsDateModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 text-white font-semibold text-xs shadow"
+              className="px-5 py-3 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-lg shadow-rose-950/50 transition cursor-pointer"
             >
-              Open Date Mode
+              Open Date Mode Planner
             </button>
           </div>
         )}

@@ -155,46 +155,53 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
       <motion.div
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 20 }}
-        className="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-white max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col"
+        className="bg-[#0B0F19] border border-white/[0.09] rounded-t-[32px] sm:rounded-[32px] w-full max-w-md p-6 text-white max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center">
-              <CalendarHeart className="w-4 h-4" />
+        <div className="flex items-center justify-between pb-3.5 border-b border-white/[0.08] mb-3.5">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
+              <CalendarHeart className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-white">Date Mode & Safety</h3>
-              <p className="text-[11px] text-slate-400">Curated low-pressure dates in Sri Lanka</p>
+              <h3 className="font-bold text-sm text-white tracking-tight">Date Mode &amp; Safety</h3>
+              <p className="text-xs text-slate-400 font-medium">Curated low-pressure dates in Sri Lanka</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 rounded-full bg-slate-800 text-slate-400 hover:text-white">
-            <X className="w-4 h-4" />
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl bg-[#162034] text-slate-400 hover:text-white transition cursor-pointer"
+          >
+            <X className="w-4 h-4 stroke-[2]" />
           </button>
         </div>
 
         {/* Tab Switcher */}
-        <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-950 rounded-2xl border border-slate-800 mb-4 text-xs font-semibold">
+        <div className="grid grid-cols-2 gap-1 p-1 bg-[#101726] rounded-2xl border border-white/[0.08] mb-4 text-xs font-semibold">
           <button
             onClick={() => setActiveTab("spots")}
-            className={`py-2 rounded-xl transition ${
-              activeTab === "spots" ? "bg-rose-600 text-white shadow" : "text-slate-400 hover:text-slate-200"
+            className={`py-2 rounded-xl transition cursor-pointer ${
+              activeTab === "spots"
+                ? "bg-rose-500 text-white font-bold shadow-md shadow-rose-950/40"
+                : "text-slate-400 hover:text-slate-200"
             }`}
           >
             Curated Safe Spots
           </button>
           <button
             onClick={() => setActiveTab("safety")}
-            className={`py-2 rounded-xl transition flex items-center justify-center space-x-1 ${
-              activeTab === "safety" ? "bg-emerald-600 text-white shadow" : "text-slate-400 hover:text-slate-200"
+            className={`py-2 rounded-xl transition flex items-center justify-center space-x-1.5 cursor-pointer ${
+              activeTab === "safety"
+                ? "bg-emerald-600 text-white font-bold shadow-md shadow-emerald-950/40"
+                : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            <ShieldCheck className="w-3.5 h-3.5" />
+            <ShieldCheck className="w-3.5 h-3.5 stroke-[2.2]" />
             <span>Private Safety Plan</span>
           </button>
         </div>
@@ -205,11 +212,11 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
             {/* Filter controls */}
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <label className="block text-[10px] text-slate-400 mb-1">City</label>
+                <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-wider">City</label>
                 <select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-1.5 text-white text-xs focus:outline-none"
+                  className="w-full bg-[#121828] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-rose-500 cursor-pointer"
                 >
                   <option value="Colombo">Colombo</option>
                   <option value="Kandy">Kandy</option>
@@ -218,11 +225,11 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-[10px] text-slate-400 mb-1">Budget Bracket</label>
+                <label className="block text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-wider">Budget Bracket</label>
                 <select
                   value={selectedBudget}
                   onChange={(e) => setSelectedBudget(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-1.5 text-white text-xs focus:outline-none"
+                  className="w-full bg-[#121828] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-rose-500 cursor-pointer"
                 >
                   <option value="all">All Budgets</option>
                   <option value="Free">Free</option>
@@ -234,16 +241,16 @@ export const DateModeModal: React.FC<DateModeModalProps> = ({
 
             {/* List of Vetted Venues */}
             {isLoading ? (
-              <div className="text-center py-8 text-xs text-slate-400">Loading verified spots...</div>
+              <div className="text-center py-12 text-xs text-slate-400">Loading verified spots...</div>
             ) : (
               <div className="space-y-3">
                 {recommendations.map((spot, idx) => (
                   <div
                     key={idx}
-                    className={`bg-slate-800/60 border rounded-2xl p-3.5 transition cursor-pointer ${
+                    className={`bg-[#121828] border rounded-2xl p-4 transition-all cursor-pointer active:scale-98 ${
                       selectedSpot?.venue_name === spot.venue_name
-                        ? "border-rose-500 bg-rose-950/20"
-                        : "border-slate-700/70 hover:border-slate-600"
+                        ? "border-rose-500/80 bg-rose-500/10 shadow-md shadow-rose-950/40"
+                        : "border-white/[0.07] hover:border-white/[0.14]"
                     }`}
                     onClick={() => setSelectedSpot(spot)}
                   >

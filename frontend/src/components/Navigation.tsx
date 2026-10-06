@@ -20,88 +20,57 @@ export const Navigation: React.FC<NavigationProps> = ({
   unreadCount = 0,
   isAdmin = false,
 }) => {
+  const tabs = [
+    { id: "discover", label: "Discover", icon: Compass, count: 0 },
+    { id: "requests", label: "Requests", icon: UserPlus, count: requestCount },
+    { id: "chat", label: "Messages", icon: MessageCircle, count: unreadCount },
+    { id: "dates", label: "Date Mode", icon: CalendarHeart, count: 0 },
+    { id: "profile", label: "Profile", icon: User, count: 0 },
+  ];
+
+  if (isAdmin) {
+    tabs.push({ id: "admin", label: "Admin", icon: BarChart3, count: 0 });
+  }
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800/80 px-2 py-1.5 safe-area-pb">
-      <div className="max-w-md mx-auto flex items-center justify-around">
-        {/* Discover */}
-        <button
-          onClick={() => onTabChange("discover")}
-          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
-            currentTab === "discover" ? "text-rose-400 font-semibold" : "text-slate-400 hover:text-slate-200"
-          }`}
-        >
-          <Compass className={`w-5 h-5 ${currentTab === "discover" ? "stroke-[2.5]" : "stroke-[1.75]"}`} />
-          <span className="text-[10px] mt-0.5">Discover</span>
-        </button>
-
-        {/* Connection Requests */}
-        <button
-          onClick={() => onTabChange("requests")}
-          className={`relative flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
-            currentTab === "requests" ? "text-rose-400 font-semibold" : "text-slate-400 hover:text-slate-200"
-          }`}
-        >
-          <UserPlus className={`w-5 h-5 ${currentTab === "requests" ? "stroke-[2.5]" : "stroke-[1.75]"}`} />
-          <span className="text-[10px] mt-0.5">Requests</span>
-          {requestCount > 0 && (
-            <span className="absolute top-0.5 right-2 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center animate-pulse">
-              {requestCount}
-            </span>
-          )}
-        </button>
-
-        {/* Chat / Matches */}
-        <button
-          onClick={() => onTabChange("chat")}
-          className={`relative flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
-            currentTab === "chat" ? "text-rose-400 font-semibold" : "text-slate-400 hover:text-slate-200"
-          }`}
-        >
-          <MessageCircle className={`w-5 h-5 ${currentTab === "chat" ? "stroke-[2.5]" : "stroke-[1.75]"}`} />
-          <span className="text-[10px] mt-0.5">Messages</span>
-          {unreadCount > 0 && (
-            <span className="absolute top-0.5 right-2 w-4 h-4 rounded-full bg-amber-500 text-slate-950 text-[9px] font-bold flex items-center justify-center">
-              {unreadCount}
-            </span>
-          )}
-        </button>
-
-        {/* Date Mode */}
-        <button
-          onClick={() => onTabChange("dates")}
-          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
-            currentTab === "dates" ? "text-rose-400 font-semibold" : "text-slate-400 hover:text-slate-200"
-          }`}
-        >
-          <CalendarHeart className={`w-5 h-5 ${currentTab === "dates" ? "stroke-[2.5]" : "stroke-[1.75]"}`} />
-          <span className="text-[10px] mt-0.5">Date Mode</span>
-        </button>
-
-        {/* Profile */}
-        <button
-          onClick={() => onTabChange("profile")}
-          className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
-            currentTab === "profile" ? "text-rose-400 font-semibold" : "text-slate-400 hover:text-slate-200"
-          }`}
-        >
-          <User className={`w-5 h-5 ${currentTab === "profile" ? "stroke-[2.5]" : "stroke-[1.75]"}`} />
-          <span className="text-[10px] mt-0.5">Profile</span>
-        </button>
-
-        {/* Admin */}
-        {isAdmin && (
-          <button
-            onClick={() => onTabChange("admin")}
-            className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
-              currentTab === "admin" ? "text-amber-400 font-semibold" : "text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            <BarChart3 className={`w-5 h-5 ${currentTab === "admin" ? "stroke-[2.5]" : "stroke-[1.75]"}`} />
-            <span className="text-[10px] mt-0.5">Admin</span>
-          </button>
-        )}
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#090D16]/92 backdrop-blur-2xl border-t border-white/[0.08] px-3 py-2 safe-area-pb">
+      <div className="max-w-md mx-auto flex items-center justify-around gap-1">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = currentTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id as NavTab)}
+              className={`relative flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl transition-all duration-200 select-none active:scale-90 ${
+                isActive
+                  ? "bg-rose-500/15 text-rose-400 font-semibold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
+              }`}
+            >
+              <div className="relative">
+                <Icon
+                  className={`w-5 h-5 transition-transform duration-200 ${
+                    isActive ? "stroke-[2.4] scale-110 text-rose-400" : "stroke-[1.8]"
+                  }`}
+                />
+                {tab.count > 0 && (
+                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-extrabold flex items-center justify-center shadow-md shadow-rose-950/60 ring-2 ring-[#090D16] animate-pulse">
+                    {tab.count}
+                  </span>
+                )}
+              </div>
+              <span
+                className={`text-[10px] mt-1 tracking-tight transition-colors ${
+                  isActive ? "text-rose-300 font-bold" : "text-slate-400 font-medium"
+                }`}
+              >
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </nav>
-
   );
 };

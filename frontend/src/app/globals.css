@@ -1,24 +1,52 @@
 @import "tailwindcss";
 
+@theme {
+  --color-katha-canvas: #090D16;
+  --color-katha-surface: #101623;
+  --color-katha-surface-hover: #161F32;
+  --color-katha-surface-elevated: #1B253C;
+  --color-katha-border: rgba(255, 255, 255, 0.08);
+  --color-katha-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-katha-border-highlight: rgba(255, 255, 255, 0.16);
+  --color-katha-coral: #F43F5E;
+  --color-katha-coral-hover: #E11D48;
+  --color-katha-coral-soft: rgba(244, 63, 94, 0.15);
+  --color-katha-amber: #F59E0B;
+  --color-katha-amber-soft: rgba(245, 158, 11, 0.15);
+  --color-katha-emerald: #10B981;
+  --color-katha-emerald-soft: rgba(16, 185, 129, 0.15);
+}
+
 @layer base {
   :root {
-    --brand-indigo: #1E1B4B;
+    --brand-indigo: #090D16;
     --brand-cream: #FDFBF7;
-    --brand-coral: #E11D48;
+    --brand-coral: #F43F5E;
     --brand-amber: #F59E0B;
     --brand-emerald: #10B981;
   }
 
+  * {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
   body {
-    background-color: #0F172A;
-    color: #0F172A;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #090D16;
+    color: #F1F5F9;
+    font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    selection-background-color: #F43F5E;
+    caret-color: #F43F5E;
+  }
+
+  ::selection {
+    background-color: #F43F5E;
+    color: #FFFFFF;
   }
 }
 
-/* Custom scrollbars */
+/* Custom themed scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -27,28 +55,56 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
+  background: rgba(148, 163, 184, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.7);
+  background: rgba(244, 63, 94, 0.5);
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Glassmorphism & Elevation */
+.katha-glass {
+  background: rgba(16, 22, 35, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.katha-card {
+  background: #101623;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.55), 0 4px 12px -2px rgba(0, 0, 0, 0.35);
 }
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+.katha-card-elevated {
+  background: #161F32;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.65);
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 2.5s infinite ease-in-out;
+.katha-glow-coral {
+  box-shadow: 0 0 24px -4px rgba(244, 63, 94, 0.35);
+}
+
+.katha-glow-amber {
+  box-shadow: 0 0 24px -4px rgba(245, 158, 11, 0.3);
+}
+
+/* Micro animations */
+@keyframes subtlePulse {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.02); opacity: 1; }
+}
+
+.animate-subtle-pulse {
+  animation: subtlePulse 3s infinite ease-in-out;
+}
+
+@keyframes waveMotion {
+  0%, 100% { height: 25%; }
+  50% { height: 95%; }
+}
+
+.animate-wave-bar {
+  animation: waveMotion 1.2s infinite ease-in-out;
 }

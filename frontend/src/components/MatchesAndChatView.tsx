@@ -101,17 +101,17 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
 
   // Left Sidebar: Matches Carousel & Conversation List
   const conversationListPanel = (
-    <div className="flex-1 overflow-y-auto p-3 space-y-4">
+    <div className="flex-1 overflow-y-auto p-4 space-y-5">
       {/* Mutual Matches Carousel */}
       {matches.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-2 px-1">
-            <h3 className="text-white font-bold text-xs uppercase tracking-wider text-slate-400">
-              Matches ({matches.length})
+          <div className="flex items-center justify-between mb-3 px-1">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              New Connections ({matches.length})
             </h3>
           </div>
 
-          <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-none">
+          <div className="flex space-x-3.5 overflow-x-auto pb-2 scrollbar-none">
             {matches.map((m) => {
               const tp = m.target_profile;
               const photo =
@@ -122,17 +122,17 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
                 <div
                   key={m.id}
                   onClick={() => m.conversation_id && onSelectConversation(m.conversation_id)}
-                  className="flex flex-col items-center shrink-0 cursor-pointer group"
+                  className="flex flex-col items-center shrink-0 cursor-pointer group active:scale-95 transition-transform"
                 >
-                  <div className="relative w-14 h-14 rounded-2xl overflow-hidden border-2 border-rose-500/80 shadow group-hover:scale-105 transition">
-                    <img src={photo} alt={tp.first_name} className="w-full h-full object-cover" />
-                    <div className="absolute bottom-0 inset-x-0 bg-slate-950/80 text-center py-0.5">
-                      <span className="text-[8px] font-bold text-amber-300">
+                  <div className="relative w-15 h-15 rounded-2xl p-[2px] bg-gradient-to-tr from-rose-500 to-amber-400 shadow-md shadow-rose-950/40 group-hover:scale-105 transition-transform">
+                    <img src={photo} alt={tp.first_name} className="w-full h-full object-cover rounded-[14px]" />
+                    <div className="absolute -bottom-1 inset-x-1 bg-[#090D16]/90 backdrop-blur-sm rounded-full text-center py-0.5 border border-white/[0.08]">
+                      <span className="text-[9px] font-extrabold text-amber-300">
                         {Math.round(m.compatibility_score)}%
                       </span>
                     </div>
                   </div>
-                  <span className="text-[11px] font-medium text-slate-300 mt-1 truncate max-w-[56px]">
+                  <span className="text-xs font-semibold text-slate-200 mt-2 truncate max-w-[60px]">
                     {tp.first_name}
                   </span>
                 </div>
@@ -144,20 +144,20 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
 
       {/* Conversations List */}
       <div>
-        <h3 className="text-white font-bold text-xs uppercase tracking-wider text-slate-400 mb-2 px-1">
-          Messages
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5 px-1">
+          Active Conversations
         </h3>
 
         {conversations.length === 0 ? (
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center">
-            <Sparkles className="w-6 h-6 text-rose-400 mx-auto mb-2" />
-            <h4 className="text-white font-semibold text-xs mb-1">No Active Chats</h4>
-            <p className="text-slate-400 text-[11px]">
-              When you connect, start chatting here!
+          <div className="bg-[#0E1422] border border-white/[0.08] rounded-3xl p-8 text-center">
+            <Sparkles className="w-6 h-6 text-rose-400 mx-auto mb-2.5" />
+            <h4 className="text-white font-bold text-xs mb-1">No Active Chats</h4>
+            <p className="text-slate-400 text-xs leading-relaxed">
+              When you send or accept connection requests, start chatting here!
             </p>
           </div>
         ) : (
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {conversations.map((conv) => {
               const tp = conv.target_profile;
               const photo =
@@ -169,22 +169,22 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
                 <div
                   key={conv.id}
                   onClick={() => onSelectConversation(conv.id)}
-                  className={`rounded-2xl p-2.5 flex items-center space-x-3 cursor-pointer transition shadow-sm ${
+                  className={`rounded-2xl p-3 flex items-center space-x-3.5 cursor-pointer transition shadow-sm ${
                     isSelected
                       ? "bg-rose-500/15 border border-rose-500/40"
-                      : "bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800/80"
+                      : "bg-[#0E1422] hover:bg-[#162034] border border-white/[0.06]"
                   }`}
                 >
                   <img
                     src={photo}
                     alt={tp.first_name}
-                    className="w-11 h-11 rounded-2xl object-cover border border-slate-700 shrink-0"
+                    className="w-12 h-12 rounded-2xl object-cover border border-white/[0.08] shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <h4 className="text-white font-bold text-xs truncate">{tp.first_name}</h4>
                       {conv.last_message && (
-                        <span className="text-[10px] text-slate-500">
+                        <span className="text-[10px] text-slate-400 font-medium">
                           {new Date(conv.last_message.created_at).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -192,12 +192,12 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                    <p className="text-xs text-slate-400 truncate mt-1">
                       {conv.last_message ? conv.last_message.content : "Tap to say hello..."}
                     </p>
                   </div>
                   {conv.unread_count > 0 && (
-                    <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center shrink-0">
+                    <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-extrabold flex items-center justify-center shrink-0">
                       {conv.unread_count}
                     </span>
                   )}
@@ -212,15 +212,15 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
 
   // Right Chat Thread Panel
   const chatThreadPanel = activeConv && targetUser ? (
-    <div className="flex flex-col h-full bg-slate-950 text-white relative">
+    <div className="flex flex-col h-full bg-[#090D16] text-white relative">
       {/* Thread Header */}
-      <div className="bg-slate-900/95 border-b border-slate-800 p-3 flex items-center justify-between z-10 backdrop-blur">
-        <div className="flex items-center space-x-2.5">
+      <div className="bg-[#0E1422]/95 border-b border-white/[0.07] px-4 py-3 flex items-center justify-between z-10 backdrop-blur-xl">
+        <div className="flex items-center space-x-3">
           <button
             onClick={() => onSelectConversation(null)}
-            className="md:hidden p-1.5 rounded-full bg-slate-800 text-slate-300 hover:text-white"
+            className="md:hidden p-2 rounded-xl bg-[#162034] text-slate-300 hover:text-white"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 stroke-[2]" />
           </button>
           <img
             src={
@@ -228,39 +228,39 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
               "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
             }
             alt={targetUser.first_name}
-            className="w-9 h-9 rounded-full object-cover border border-slate-700"
+            className="w-10 h-10 rounded-2xl object-cover border border-white/[0.1]"
           />
           <div>
-            <div className="flex items-center space-x-1">
-              <h4 className="font-bold text-sm leading-none">{targetUser.first_name}</h4>
-              <span className="text-[10px] text-emerald-400 font-medium">• Online</span>
+            <div className="flex items-center space-x-1.5">
+              <h4 className="font-bold text-sm leading-tight text-white">{targetUser.first_name}</h4>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-emerald-950" />
             </div>
-            <span className="text-[10px] text-slate-400">{targetUser.neighborhood}</span>
+            <span className="text-xs text-slate-400">{targetUser.neighborhood || targetUser.city}</span>
           </div>
         </div>
 
-        <div className="flex items-center space-x-1.5">
+        <div className="flex items-center space-x-2">
           <button
             onClick={() => onOpenDatePlan(activeConv.match_id)}
-            className="text-[11px] font-semibold bg-gradient-to-r from-rose-500 to-amber-500 hover:opacity-90 text-white px-2.5 py-1.5 rounded-xl shadow flex items-center space-x-1"
+            className="text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl shadow-md shadow-rose-950/40 flex items-center space-x-1.5 cursor-pointer active:scale-95 transition"
           >
-            <CalendarHeart className="w-3.5 h-3.5" />
+            <CalendarHeart className="w-3.5 h-3.5 stroke-[2]" />
             <span>Plan Date</span>
           </button>
           <button
             onClick={() => setShowSafetyModal(true)}
-            className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-rose-400 border border-slate-700 transition"
+            className="p-2 rounded-xl bg-[#162034] hover:bg-rose-950/40 text-slate-400 hover:text-rose-400 border border-white/[0.08] transition cursor-pointer"
             title="Safety & Controls"
           >
-            <ShieldAlert className="w-4 h-4" />
+            <ShieldAlert className="w-4 h-4 stroke-[2]" />
           </button>
         </div>
       </div>
 
       {/* Message Thread History */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3.5">
         {currentMessages.length === 0 ? (
-          <div className="text-center py-12 text-slate-500 text-xs">
+          <div className="text-center py-16 text-slate-400 text-xs">
             No messages yet. Send an opening greeting to get started!
           </div>
         ) : (
@@ -270,15 +270,15 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
               className={`flex flex-col ${msg.is_mine ? "items-end" : "items-start"}`}
             >
               <div
-                className={`max-w-[78%] px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed shadow-sm ${
+                className={`max-w-[78%] px-4 py-2.5 rounded-2xl text-xs leading-relaxed shadow-md ${
                   msg.is_mine
-                    ? "bg-rose-600 text-white rounded-tr-sm"
-                    : "bg-slate-800 text-slate-100 rounded-tl-sm border border-slate-700/50"
+                    ? "bg-rose-600 text-white rounded-tr-sm shadow-rose-950/40"
+                    : "bg-[#12192C] text-slate-100 rounded-tl-sm border border-white/[0.07]"
                 }`}
               >
                 <p>{msg.content}</p>
               </div>
-              <div className="flex items-center space-x-1 text-[9px] text-slate-500 mt-1 px-1">
+              <div className="flex items-center space-x-1 text-[10px] text-slate-400 mt-1 px-1">
                 <span>
                   {new Date(msg.created_at).toLocaleTimeString([], {
                     hour: "2-digit",
@@ -288,9 +288,9 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
                 {msg.is_mine && (
                   <span>
                     {msg.read_at ? (
-                      <CheckCheck className="w-3 h-3 text-sky-400" />
+                      <CheckCheck className="w-3.5 h-3.5 text-sky-400" />
                     ) : (
-                      <Check className="w-3 h-3 text-slate-400" />
+                      <Check className="w-3.5 h-3.5 text-slate-400" />
                     )}
                   </span>
                 )}
@@ -303,12 +303,12 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
 
       {/* Icebreaker Starter Chips */}
       {activeConv.suggested_starters && activeConv.suggested_starters.length > 0 && (
-        <div className="px-3 py-1.5 bg-slate-900/60 border-t border-slate-800/80 overflow-x-auto whitespace-nowrap flex space-x-2 scrollbar-none">
+        <div className="px-4 py-2 bg-[#0E1422] border-t border-white/[0.06] overflow-x-auto whitespace-nowrap flex space-x-2 scrollbar-none">
           {activeConv.suggested_starters.map((starter, i) => (
             <button
               key={i}
               onClick={() => setInputText(starter)}
-              className="text-[10px] bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white px-2.5 py-1 rounded-full border border-slate-700 shrink-0 transition"
+              className="text-[11px] font-medium bg-[#162034] hover:bg-[#1C2A44] text-slate-200 hover:text-white px-3 py-1 rounded-full border border-white/[0.08] shrink-0 transition cursor-pointer"
             >
               {starter}
             </button>
@@ -317,28 +317,30 @@ export const MatchesAndChatView: React.FC<MatchesAndChatViewProps> = ({
       )}
 
       {/* Send Message Form */}
-      <form onSubmit={handleSend} className="p-3 bg-slate-900 border-t border-slate-800 flex items-center space-x-2">
+      <form onSubmit={handleSend} className="p-3 bg-[#0E1422] border-t border-white/[0.07] flex items-center space-x-2">
         <input
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           placeholder={`Message ${targetUser.first_name}...`}
-          className="flex-1 bg-slate-950 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+          className="flex-1 bg-[#090D16] border border-white/[0.1] rounded-2xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 transition-colors"
         />
         <button
           type="submit"
           disabled={!inputText.trim() || isSending}
-          className="w-9 h-9 rounded-2xl bg-rose-600 hover:bg-rose-700 disabled:opacity-40 text-white flex items-center justify-center transition shrink-0 shadow"
+          className="w-10 h-10 rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 text-white flex items-center justify-center transition shrink-0 shadow-md shadow-rose-950/40 cursor-pointer active:scale-95"
         >
-          <Send className="w-4 h-4" />
+          <Send className="w-4 h-4 stroke-[2]" />
         </button>
       </form>
     </div>
   ) : (
-    <div className="hidden md:flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-500 bg-slate-950">
-      <MessageSquare className="w-12 h-12 text-slate-700 mb-3" />
-      <h3 className="text-white font-bold text-sm mb-1">Select a Conversation</h3>
-      <p className="text-xs max-w-xs text-slate-400">
+    <div className="hidden md:flex flex-1 flex-col items-center justify-center p-8 text-center text-slate-500 bg-[#090D16]">
+      <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mb-3">
+        <MessageSquare className="w-7 h-7 text-rose-400 stroke-[1.8]" />
+      </div>
+      <h3 className="text-white font-bold text-sm mb-1.5">Select a Conversation</h3>
+      <p className="text-xs max-w-xs text-slate-400 leading-relaxed">
         Choose a match on the left to review your chat or propose a safe date in Colombo, Kandy, or Galle.
       </p>
     </div>

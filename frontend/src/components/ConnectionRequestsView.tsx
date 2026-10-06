@@ -47,17 +47,17 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
   };
 
   return (
-    <div className="pb-24 pt-3 px-3 max-w-md mx-auto">
+    <div className="pb-28 pt-4 px-4 max-w-lg mx-auto">
       {/* Header */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 mb-4 backdrop-blur">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
-            <UserCheck className="w-4 h-4" />
+      <div className="bg-[#0E1424] border border-white/[0.08] rounded-2xl p-4 sm:p-5 mb-5 shadow-lg">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center font-bold">
+            <UserCheck className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-white font-bold text-base">Connection Requests</h2>
+            <h2 className="text-white font-bold text-base tracking-tight">Connection Requests</h2>
             <p className="text-slate-400 text-xs">
-              People who resonated with your profile and wish to connect
+              Daters who engaged with your cards and sent an opening note
             </p>
           </div>
         </div>
@@ -65,12 +65,12 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
 
       {/* Requests List */}
       {requests.length === 0 ? (
-        <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 text-center my-6">
-          <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-400">
+        <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-8 sm:p-10 text-center my-6">
+          <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center mx-auto mb-3.5 text-slate-400">
             <HeartHandshake className="w-6 h-6" />
           </div>
-          <h3 className="text-white font-semibold text-sm mb-1">No Pending Requests</h3>
-          <p className="text-slate-400 text-xs max-w-xs mx-auto">
+          <h3 className="text-white font-bold text-sm mb-1">No Pending Requests</h3>
+          <p className="text-slate-400 text-xs max-w-xs mx-auto leading-relaxed">
             When someone likes your Connection Cards or profile prompts, their request will appear here with an opening note.
           </p>
         </div>
@@ -84,26 +84,29 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
             return (
               <div
                 key={req.id}
-                className="bg-slate-900 border border-slate-800 rounded-3xl p-4 shadow-lg hover:border-slate-700 transition"
+                className="bg-[#0E1424] border border-white/[0.08] rounded-3xl p-4.5 sm:p-5 shadow-xl hover:border-white/15 transition"
               >
-                <div className="flex items-center space-x-3 mb-3">
+                <div className="flex items-center space-x-3.5 mb-3.5">
                   <img
                     src={photo}
                     alt={sender.first_name}
-                    className="w-14 h-14 rounded-2xl object-cover border border-slate-700 shrink-0"
+                    className="w-14 h-14 rounded-2xl object-cover border border-white/10 shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-1.5">
-                      <h4 className="text-white font-bold text-sm truncate">{sender.first_name}, {sender.age}</h4>
+                      <h4 className="text-white font-bold text-sm tracking-tight truncate">{sender.first_name}, {sender.age}</h4>
                       {sender.is_phone_verified && (
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span className="inline-flex items-center space-x-0.5 px-1.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold">
+                          <ShieldCheck className="w-3 h-3" />
+                          <span>Verified</span>
+                        </span>
                       )}
                     </div>
                     <div className="flex items-center space-x-1 text-slate-400 text-xs mt-0.5">
                       <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
                       <span className="truncate">{sender.neighborhood}</span>
                     </div>
-                    <p className="text-[11px] text-slate-300 truncate mt-0.5">
+                    <p className="text-[11px] text-slate-300 truncate mt-0.5 font-medium">
                       {sender.occupation || sender.relationship_intent}
                     </p>
                   </div>
@@ -111,9 +114,9 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
 
                 {/* Intro Note */}
                 {req.intro_note && (
-                  <div className="bg-slate-950/70 border border-slate-800 rounded-2xl p-3 mb-3">
-                    <span className="text-[10px] uppercase font-bold text-amber-300 block mb-0.5">
-                      Their Opening Note:
+                  <div className="bg-[#090D16]/70 border border-white/[0.06] rounded-2xl p-3.5 mb-3.5">
+                    <span className="text-[10px] uppercase font-bold text-amber-300 block mb-1 tracking-wider">
+                      Opening Note:
                     </span>
                     <p className="text-xs text-slate-200 italic leading-relaxed">
                       &quot;{req.intro_note}&quot;
@@ -126,9 +129,9 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
                   <button
                     disabled={isProcessing === req.id}
                     onClick={() => handleAccept(req)}
-                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-semibold text-xs shadow flex items-center justify-center space-x-1.5 transition disabled:opacity-50"
+                    className="flex-1 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-lg shadow-rose-950/40 flex items-center justify-center space-x-1.5 transition disabled:opacity-50 cursor-pointer"
                   >
-                    <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <Check className="w-4 h-4 stroke-[2.5]" />
                     <span>{isProcessing === req.id ? "Accepting..." : "Accept Connection"}</span>
                   </button>
                 </div>
@@ -140,36 +143,36 @@ export const ConnectionRequestsView: React.FC<ConnectionRequestsViewProps> = ({
 
       {/* Match Celebration Screen */}
       {acceptedMatchId && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#090D16]/90 backdrop-blur-md flex items-center justify-center p-4">
           <motion.div
-            initial={{ scale: 0.85, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", damping: 18 }}
-            className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-rose-500/40 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl animate-fade-in"
+            transition={{ type: "spring", damping: 20 }}
+            className="bg-[#0E1424] border border-rose-500/30 rounded-3xl w-full max-w-sm p-6 sm:p-7 text-center shadow-2xl animate-fade-in relative"
           >
-            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-rose-900/40">
-              <Sparkles className="w-8 h-8 text-white animate-pulse" />
+            <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center mx-auto mb-4 text-rose-400 shadow-lg shadow-rose-950/50">
+              <Sparkles className="w-8 h-8 animate-pulse" />
             </div>
 
-            <h3 className="text-xl font-bold text-white mb-1">You Found a Connection!</h3>
-            <p className="text-slate-300 text-xs mb-6">
-              You and <span className="text-rose-400 font-semibold">{acceptedSenderName}</span> are now connected. Start the conversation with an organic question!
+            <h3 className="text-xl font-bold text-white mb-1.5 tracking-tight">You Found a Connection!</h3>
+            <p className="text-slate-300 text-xs mb-6 leading-relaxed">
+              You and <span className="text-rose-400 font-semibold">{acceptedSenderName}</span> are now mutually connected. You can now chat and coordinate safety check-ins!
             </p>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <button
                 onClick={() => {
                   const mId = acceptedMatchId;
                   setAcceptedMatchId(null);
                   onOpenMatchChat(mId);
                 }}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bold text-xs shadow-lg transition"
+                className="w-full py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-lg shadow-rose-950/50 transition cursor-pointer"
               >
                 Open Conversation
               </button>
               <button
                 onClick={() => setAcceptedMatchId(null)}
-                className="w-full py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition"
+                className="w-full py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 text-xs font-semibold transition cursor-pointer border border-white/[0.06]"
               >
                 Keep Browsing Requests
               </button>

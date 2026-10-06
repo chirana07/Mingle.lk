@@ -83,40 +83,48 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
         (selectedLifestyle !== "all" ? 1 : 0);
 
     return (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-end">
+        <div className="fixed inset-0 z-50 bg-[#090D16]/80 backdrop-blur-md flex justify-end">
             <motion.div
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 280 }}
-                className="w-full max-w-md bg-slate-900 border-l border-slate-800 h-full flex flex-col text-white shadow-2xl"
+                transition={{ type: "spring", damping: 26, stiffness: 300 }}
+                className="w-full max-w-md bg-[#0E1424] border-l border-white/[0.08] h-full flex flex-col text-white shadow-2xl relative"
             >
                 {/* Header */}
-                <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                        <Filter className="w-5 h-5 text-rose-500" />
-                        <h3 className="font-bold text-base">Discovery Feed Filters</h3>
-                        {activeCount > 0 && (
-                            <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-bold">
-                                {activeCount} active
-                            </span>
-                        )}
+                <div className="p-4 sm:p-5 border-b border-white/[0.08] flex items-center justify-between bg-[#101623]/80 backdrop-blur-md">
+                    <div className="flex items-center space-x-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                            <Filter className="w-4 h-4" />
+                        </div>
+                        <div>
+                            <div className="flex items-center space-x-2">
+                                <h3 className="font-bold text-sm tracking-tight text-white">Discovery Filters</h3>
+                                {activeCount > 0 && (
+                                    <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-bold">
+                                        {activeCount} active
+                                    </span>
+                                )}
+                            </div>
+                            <p className="text-[11px] text-slate-400">Refine by Sri Lankan province, intent & pace</p>
+                        </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+                        className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white transition cursor-pointer"
+                        aria-label="Close filters"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
 
                 {/* Scrollable Filter Body */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6">
                     {/* 1. Sri Lankan District */}
                     <div>
                         <div className="flex items-center space-x-1.5 mb-2.5">
-                            <MapPin className="w-4 h-4 text-rose-400" />
-                            <label className="text-xs uppercase font-bold text-slate-300 tracking-wider">
+                            <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                            <label className="text-[11px] uppercase font-bold text-slate-300 tracking-wider">
                                 Sri Lankan District
                             </label>
                         </div>
@@ -129,10 +137,11 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                                     <button
                                         key={dist}
                                         onClick={() => onDistrictChange(dist === "All" ? "all" : dist)}
-                                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${isSelected
-                                                ? "bg-rose-500 text-white shadow-md shadow-rose-950/40"
-                                                : "bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800"
-                                            }`}
+                                        className={`px-3 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${
+                                            isSelected
+                                                ? "bg-rose-500 text-white font-bold shadow-md shadow-rose-950/60 border border-rose-400/40"
+                                                : "bg-white/[0.03] text-slate-300 hover:text-white hover:bg-white/[0.07] border border-white/[0.06]"
+                                        }`}
                                     >
                                         {dist}
                                     </button>
@@ -144,59 +153,67 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                     {/* 2. Relationship Intent */}
                     <div>
                         <div className="flex items-center space-x-1.5 mb-2.5">
-                            <Sparkles className="w-4 h-4 text-amber-400" />
-                            <label className="text-xs uppercase font-bold text-slate-300 tracking-wider">
+                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                            <label className="text-[11px] uppercase font-bold text-slate-300 tracking-wider">
                                 Relationship Intention
                             </label>
                         </div>
                         <div className="space-y-1.5">
-                            {INTENT_OPTIONS.map((opt) => (
-                                <button
-                                    key={opt.value}
-                                    onClick={() => onIntentChange(opt.value)}
-                                    className={`w-full p-2.5 rounded-xl text-xs flex items-center justify-between transition border ${selectedIntent === opt.value
-                                            ? "bg-amber-500/20 border-amber-500 text-white font-semibold"
-                                            : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"
+                            {INTENT_OPTIONS.map((opt) => {
+                                const isSelected = selectedIntent === opt.value;
+                                return (
+                                    <button
+                                        key={opt.value}
+                                        onClick={() => onIntentChange(opt.value)}
+                                        className={`w-full p-2.5 sm:p-3 rounded-xl text-xs flex items-center justify-between transition border cursor-pointer ${
+                                            isSelected
+                                                ? "bg-amber-500/15 border-amber-500/40 text-amber-200 font-semibold shadow-sm"
+                                                : "bg-white/[0.02] border-white/[0.06] text-slate-300 hover:text-white hover:bg-white/[0.05]"
                                         }`}
-                                >
-                                    <span>{opt.label}</span>
-                                    {selectedIntent === opt.value && <Check className="w-4 h-4 text-amber-400" />}
-                                </button>
-                            ))}
+                                    >
+                                        <span>{opt.label}</span>
+                                        {isSelected && <Check className="w-4 h-4 text-amber-400 shrink-0" />}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 
                     {/* 3. Lifestyle Rhythm & Pace */}
                     <div>
                         <div className="flex items-center space-x-1.5 mb-2.5">
-                            <Compass className="w-4 h-4 text-sky-400" />
-                            <label className="text-xs uppercase font-bold text-slate-300 tracking-wider">
+                            <Compass className="w-3.5 h-3.5 text-sky-400" />
+                            <label className="text-[11px] uppercase font-bold text-slate-300 tracking-wider">
                                 Lifestyle Pace & Rhythm
                             </label>
                         </div>
                         <div className="space-y-1.5">
-                            {LIFESTYLE_OPTIONS.map((opt) => (
-                                <button
-                                    key={opt.value}
-                                    onClick={() => onLifestyleChange(opt.value)}
-                                    className={`w-full p-2.5 rounded-xl text-xs flex items-center justify-between transition border ${selectedLifestyle === opt.value
-                                            ? "bg-sky-500/20 border-sky-500 text-white font-semibold"
-                                            : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"
+                            {LIFESTYLE_OPTIONS.map((opt) => {
+                                const isSelected = selectedLifestyle === opt.value;
+                                return (
+                                    <button
+                                        key={opt.value}
+                                        onClick={() => onLifestyleChange(opt.value)}
+                                        className={`w-full p-2.5 sm:p-3 rounded-xl text-xs flex items-center justify-between transition border cursor-pointer ${
+                                            isSelected
+                                                ? "bg-sky-500/15 border-sky-500/40 text-sky-200 font-semibold shadow-sm"
+                                                : "bg-white/[0.02] border-white/[0.06] text-slate-300 hover:text-white hover:bg-white/[0.05]"
                                         }`}
-                                >
-                                    <span>{opt.label}</span>
-                                    {selectedLifestyle === opt.value && <Check className="w-4 h-4 text-sky-400" />}
-                                </button>
-                            ))}
+                                    >
+                                        <span>{opt.label}</span>
+                                        {isSelected && <Check className="w-4 h-4 text-sky-400 shrink-0" />}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center space-x-3">
+                <div className="p-4 sm:p-5 border-t border-white/[0.08] bg-[#101623]/90 backdrop-blur-md flex items-center space-x-3">
                     <button
                         onClick={onResetAll}
-                        className="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold flex items-center space-x-1.5 transition"
+                        className="px-4 py-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white text-xs font-semibold flex items-center space-x-1.5 transition cursor-pointer border border-white/[0.06]"
                     >
                         <RotateCcw className="w-3.5 h-3.5" />
                         <span>Reset</span>
@@ -206,7 +223,7 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                             onApply();
                             onClose();
                         }}
-                        className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-amber-500 text-white text-xs font-bold shadow-lg shadow-rose-900/30 transition hover:opacity-95"
+                        className="flex-1 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold shadow-lg shadow-rose-950/50 transition cursor-pointer"
                     >
                         Apply Filters {activeCount > 0 ? `(${activeCount})` : ""}
                     </button>
