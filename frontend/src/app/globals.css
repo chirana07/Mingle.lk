@@ -249,3 +249,56 @@
   font-size: 14px;
   line-height: 1.7;
 }
+
+/* Main connection action */
+.connect-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--mingle-tint);
+  color: var(--mingle-accent);
+  font-size: 13px;
+  font-weight: 650;
+  transition: background-color 180ms, color 180ms;
+}
+
+.connect-action:not(:disabled):hover {
+  background: var(--mingle-accent);
+  color: white;
+}
+
+.connect-action:not(:disabled):active {
+  background: #54288a;
+  color: white;
+}
+
+/* Confirmation after sending a request */
+.connect-action.sent {
+  background: #EDF7EF;
+  color: #28613A;
+  opacity: 1;
+}
+
+/* Keep the secondary action quieter */
+.story-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-size: 13px;
+  color: var(--mingle-muted);
+}
+
+.story-action:hover {
+  color: var(--mingle-accent);
+}
+
+/* Allow actions to fit on smaller screens */
+.post-actions {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
