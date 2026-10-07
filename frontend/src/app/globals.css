@@ -10,14 +10,14 @@
   --color-rose-600: #60339f;
   --color-rose-700: #54288a;
   --color-rose-950: #261139;
-  --color-katha-canvas: #faf9fc;
+  --color-katha-canvas: #FCFAF7;
   --color-katha-surface: #fff;
   --color-katha-surface-hover: #f4f1f8;
   --color-katha-border: #e6e1ed;
 }
 
 @layer base {
-  :root { color-scheme: light; --mingle-ink: #262131; --mingle-muted: #716a7e; --mingle-accent: #7041b5; --mingle-tint: #f1eaf9; --mingle-border: #e6e1ed; --mingle-canvas: #faf9fc; }
+  :root { color-scheme: light; --mingle-ink: #262131; --mingle-muted: #716a7e; --mingle-accent: #7041b5; --mingle-tint: #F3EDF9; --mingle-border: #e6e1ed; --mingle-canvas: #FCFAF7; --mingle-peach: #FFF1E8; --mingle-peach-ink: #75452F;}
   * { border-color: var(--mingle-border); }
   body { background: var(--mingle-canvas); color: var(--mingle-ink); font-family: var(--font-geist-sans), sans-serif; -webkit-font-smoothing: antialiased; caret-color: var(--mingle-accent); }
   button, a, select { -webkit-tap-highlight-color: transparent; }
@@ -27,7 +27,7 @@
   input, textarea, select { accent-color: var(--mingle-accent); }
   input::placeholder, textarea::placeholder { color: #787184; }
   h1, h2, h3 { text-wrap: balance; }
-  ::selection { background: #dcc8f1; color: #261139; }
+  ::selection { background: #dcc8f1; color: #371a50; }
 }
 ::-webkit-scrollbar { width: 6px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -199,3 +199,53 @@
 .mobile-account-menu button:hover { background: var(--mingle-tint); border-radius: 8px; }
 .mobile-account-menu select { margin-left: auto; max-width: 130px; }
 @media (max-width: 767px) { .mobile-header-actions { gap: 0; } .mobile-header .mingle-logo { font-size: 24px; } }
+
+.shared-answer {
+  background: var(--mingle-peach);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.shared-answer small,
+.shared-answer > span > span {
+  color: var(--mingle-peach-ink);
+}
+
+/* Larger names on discovery profile cards */
+.post-identity strong {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Clearer location and occupation */
+.post-identity small {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 4px;
+  color: var(--mingle-muted);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Keep the avatar aligned with longer details */
+.post-identity {
+  align-items: flex-start;
+}
+
+/* Slightly larger profile avatar */
+.post-avatar {
+  width: 44px;
+  height: 44px;
+}
+
+/* More comfortable spacing in the profile header */
+.post-header {
+  padding: 16px 18px;
+}
+
+/* Readable biography text */
+.post-bio {
+  font-size: 14px;
+  line-height: 1.7;
+}
