@@ -195,6 +195,7 @@ class MatchingService:
                 not_(User.id.in_(list(excluded_ids))),
                 User.status == "active",
                 User.discovery_enabled.is_(True),
+                User.role == "user",
                 Profile.deleted_at.is_(None),
             )
             .options(

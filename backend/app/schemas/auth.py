@@ -36,3 +36,6 @@ class UserResponse(BaseModel):
     is_email_verified: bool
     is_selfie_verified: bool
     is_profile_completed: bool
+
+    discovery_enabled: bool = True
+    show_neighborhood_only: bool = True

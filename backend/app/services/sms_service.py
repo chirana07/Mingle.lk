@@ -46,11 +46,11 @@ class SMSService:
         tracking_url: str
     ) -> str:
         """
-        Format: 'Hi [Name], [User] has scheduled a date at [Venue, City] at [Time] via Katha. Track status: [SafetyLink]'
+        Format: 'Hi [Name], [User] has scheduled a date at [Venue, City] at [Time] via Mingle.lk. Track status: [SafetyLink]'
         """
         return (
             f"Hi {contact_name}, {user_name} has scheduled a date at {venue_name}, {city} "
-            f"at {scheduled_time_str} via Katha. Track status: {tracking_url}"
+            f"at {scheduled_time_str} via Mingle.lk. Track status: {tracking_url}"
         )
 
     @classmethod
@@ -64,7 +64,7 @@ class SMSService:
         2-hour check-in reminder SMS to the user
         """
         return (
-            f"Katha Safety Check-in: Hi {user_name}, it has been 2 hours since your date started at {venue_name}. "
+            f"Mingle.lk Safety Check-in: Hi {user_name}, it has been 2 hours since your date started at {venue_name}. "
             f"Are you safe? Check in now: {tracking_url}"
         )
 
@@ -101,7 +101,7 @@ class SMSService:
         Notification sent to trusted contact when user checks in safely
         """
         return (
-            f"Katha Safety Update: {user_name} has confirmed they are safe and all is well from their date at {venue_name}. "
+            f"Mingle.lk Safety Update: {user_name} has confirmed they are safe and all is well from their date at {venue_name}. "
             f"Live status: {tracking_url}"
         )
 

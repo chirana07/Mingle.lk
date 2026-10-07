@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Locale, getTranslation } from "@/i18n";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { toast } from "sonner";
+import { Locale } from "@/i18n";
 import { api } from "@/lib/api";
 import {
   UserProfile,
@@ -12,7 +13,8 @@ import {
   ConversationSummaryItem,
   MessageItem,
 } from "@/lib/types";
-import { CalendarHeart } from "lucide-react";
+import { CalendarHeart, ArrowUpRight, ShieldCheck, UserRound, MessageCircle } from "lucide-react";
+import { MingleLogo } from "@/components/MingleLogo";
 import { Header } from "@/components/Header";
 import { Navigation, NavTab } from "@/components/Navigation";
 import { DiscoveryFeed } from "@/components/DiscoveryFeed";
@@ -31,6 +33,14 @@ export default function Home() {
   const [currentTab, setCurrentTab] = useState<NavTab>("discover");
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(null);
+
+  const [noteTarget, setNoteTarget] = useState<DiscoveryProfileItem | null>(null);
+  const [appError, setAppError] = useState<string | null>(null);
+  const filtersRef = useRef({ city: "all", intent: "all", lifestyle_pace: "all" });
+  const feedVersion = useRef(0);
+  const messageMutation = useRef(0);
+  const activeConversationRef = useRef<string | null>(null);
+  const [messagesLoading, setMessagesLoading] = useState(false);
 
   // App Data
   const [discoveryProfiles, setDiscoveryProfiles] = useState<DiscoveryProfileItem[]>([]);
@@ -58,40 +68,43 @@ export default function Home() {
   const [isRespondersOpen, setIsRespondersOpen] = useState(false);
   const [isLoadingFeed, setIsLoadingFeed] = useState(false);
 
-  const t = getTranslation(currentLocale);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [currentTab]);
 
   const loadAllAppData = useCallback(async () => {
+    const version = ++feedVersion.current;
+    const token = api.getToken();
     setIsLoadingFeed(true);
+    setAppError(null);
     try {
       const [cards, myAnswers, reqs, matchItems, convs, disc] = await Promise.all([
-        api.getConnectionCards().catch(() => []),
-        api.getMyCardAnswers().catch(() => []),
-        api.getReceivedRequests().catch(() => []),
-        api.getMatches().catch(() => []),
-        api.getConversations().catch(() => []),
-        api.getDiscoveryFeed({
-          city: selectedCity,
-          intent: selectedIntent,
-          lifestyle_pace: selectedLifestyle,
-        }).catch(() => []),
+        api.getConnectionCards(),
+        api.getMyCardAnswers(),
+        api.getReceivedRequests(),
+        api.getMatches(),
+        api.getConversations(),
+        api.getDiscoveryFeed(filtersRef.current),
       ]);
+      if (api.getToken() !== token) return;
       setConnectionCards(cards);
       setMyCardAnswers(myAnswers);
       setRequests(reqs);
       setMatches(matchItems);
       setConversations(convs);
-      setDiscoveryProfiles(disc);
+      if (version === feedVersion.current) setDiscoveryProfiles(disc);
     } catch (e) {
-      console.error("Failed to load app data", e);
+      setAppError("We couldn’t load your connections. Check your connection and try again.");
     } finally {
-      setIsLoadingFeed(false);
+      if (version === feedVersion.current) setIsLoadingFeed(false);
     }
-  }, [selectedCity, selectedIntent, selectedLifestyle]);
+  }, []);
 
   // Demo user login (Senuri)
   const handleQuickDemoLogin = useCallback(async () => {
     try {
       const authRes = await api.verifyOtp("+94771234567", "123456");
+      sessionStorage.removeItem("mingle_signed_out");
       api.setToken(authRes.access_token);
       const me = await api.getMe();
       setCurrentUser(me);
@@ -99,7 +112,7 @@ export default function Home() {
       setCurrentProfile(prof);
       await loadAllAppData();
     } catch (e) {
-      console.error("Demo login failed", e);
+      setAppError("Demo sign-in failed. Make sure the local service is running, then retry.");
     }
   }, [loadAllAppData]);
 
@@ -107,6 +120,7 @@ export default function Home() {
   const handleQuickAdminLogin = useCallback(async () => {
     try {
       const authRes = await api.verifyOtp("admin@mingle.lk", "123456");
+      sessionStorage.removeItem("mingle_signed_out");
       api.setToken(authRes.access_token);
       const me = await api.getMe();
       setCurrentUser(me);
@@ -114,7 +128,7 @@ export default function Home() {
       setCurrentProfile(prof);
       await loadAllAppData();
     } catch (e) {
-      console.error("Admin login failed", e);
+      toast.error("Admin sign-in failed. Please try again.");
     }
   }, [loadAllAppData]);
 
@@ -132,77 +146,34 @@ export default function Home() {
         api.setToken(null);
       }
     }
-    handleQuickDemoLogin();
+    if (!sessionStorage.getItem("mingle_signed_out")) await handleQuickDemoLogin();
   }, [loadAllAppData, handleQuickDemoLogin]);
 
   useEffect(() => {
     initSession();
   }, [initSession]);
 
-  const handleCityChange = async (city: string) => {
-    setSelectedCity(city);
+  useEffect(() => {
+    filtersRef.current = { city: selectedCity, intent: selectedIntent, lifestyle_pace: selectedLifestyle };
+    if (!currentUser) return;
+    const version = ++feedVersion.current;
     setIsLoadingFeed(true);
-    try {
-      const disc = await api.getDiscoveryFeed({
-        city,
-        intent: selectedIntent,
-        lifestyle_pace: selectedLifestyle,
-      });
-      setDiscoveryProfiles(disc);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoadingFeed(false);
-    }
-  };
+    api.getDiscoveryFeed(filtersRef.current).then((items) => {
+      if (version === feedVersion.current) setDiscoveryProfiles(items);
+    }).catch(() => {
+      if (version === feedVersion.current) setAppError("Couldn’t update the feed. Please retry.");
+    }).finally(() => {
+      if (version === feedVersion.current) setIsLoadingFeed(false);
+    });
+  }, [selectedCity, selectedIntent, selectedLifestyle, currentUser?.id]);
 
-  const handleIntentChange = async (intent: string) => {
-    setSelectedIntent(intent);
-    setIsLoadingFeed(true);
-    try {
-      const disc = await api.getDiscoveryFeed({
-        city: selectedCity,
-        intent,
-        lifestyle_pace: selectedLifestyle,
-      });
-      setDiscoveryProfiles(disc);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoadingFeed(false);
-    }
-  };
-
-  const handleLifestyleChange = async (lifestyle: string) => {
-    setSelectedLifestyle(lifestyle);
-    setIsLoadingFeed(true);
-    try {
-      const disc = await api.getDiscoveryFeed({
-        city: selectedCity,
-        intent: selectedIntent,
-        lifestyle_pace: lifestyle,
-      });
-      setDiscoveryProfiles(disc);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoadingFeed(false);
-    }
-  };
-
-  const handleResetFilters = async () => {
+  const handleCityChange = setSelectedCity;
+  const handleIntentChange = setSelectedIntent;
+  const handleLifestyleChange = setSelectedLifestyle;
+  const handleResetFilters = () => {
     setSelectedCity("all");
     setSelectedIntent("all");
     setSelectedLifestyle("all");
-    setIsLoadingFeed(true);
-    try {
-      const disc = await api.getDiscoveryFeed({});
-      setDiscoveryProfiles(disc);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoadingFeed(false);
-    }
   };
 
   const handleSendConnection = async (data: {
@@ -212,7 +183,9 @@ export default function Home() {
     prompt_key?: string;
     intro_note?: string;
   }) => {
-    await api.sendConnectionRequest(data);
+    const result = await api.sendConnectionRequest(data);
+    await loadAllAppData();
+    if (result.status === "matched") toast.success("You connected! Your conversation is ready in Messages.");
   };
 
   const handleAcceptRequest = async (requestId: string): Promise<string> => {
@@ -226,31 +199,60 @@ export default function Home() {
     await loadAllAppData();
   };
 
-  const loadMessages = useCallback(async (convId: string) => {
-    try {
-      const msgs = await api.getMessages(convId);
-      setCurrentMessages(msgs);
-    } catch (e) {
-      console.error("Failed to load messages", e);
-    }
-  }, []);
-
   const handleSelectConversation = (convId: string | null) => {
+    activeConversationRef.current = convId;
     setActiveConversationId(convId);
-    if (convId) {
-      loadMessages(convId);
-    } else {
-      setCurrentMessages([]);
-    }
+    setCurrentMessages([]);
+    setMessagesLoading(!!convId);
   };
+
+  useEffect(() => {
+    if (!currentUser || currentTab !== "chat") return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const refresh = async () => {
+      try {
+        if (activeConversationId) {
+          const version = messageMutation.current;
+          const messages = await api.getMessages(activeConversationId);
+          if (!cancelled && version === messageMutation.current) setCurrentMessages(messages);
+        }
+        const items = await api.getConversations();
+        if (!cancelled) setConversations(items);
+      } catch {
+        if (!cancelled) setAppError("Chat couldn’t refresh. Your draft is safe; please retry.");
+      } finally {
+        if (!cancelled) {
+          setMessagesLoading(false);
+          timer = setTimeout(refresh, 4000);
+        }
+      }
+    };
+    void refresh();
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [activeConversationId, currentTab, currentUser?.id]);
+
+  useEffect(() => {
+    if (!currentUser || currentTab === "chat") return;
+    let cancelled = false;
+    const refresh = async () => {
+      try {
+        const [reqs, convs, items] = await Promise.all([api.getReceivedRequests(), api.getConversations(), api.getMatches()]);
+        if (!cancelled) { setRequests(reqs); setConversations(convs); setMatches(items); }
+      } catch { /* Keep the last successful data; foreground actions expose errors. */ }
+    };
+    void refresh();
+    const timer = setInterval(refresh, 10000);
+    return () => { cancelled = true; clearInterval(timer); };
+  }, [currentTab, currentUser?.id]);
 
   const handleSendMessage = async (convId: string, content: string) => {
     const msg = await api.sendMessage(convId, content);
-    setCurrentMessages((prev) => [...prev, msg]);
-    const updatedConvs = await api.getConversations().catch(() => null);
-    if (updatedConvs) {
-      setConversations(updatedConvs);
+    ++messageMutation.current;
+    if (activeConversationRef.current === convId) {
+      setCurrentMessages((prev) => prev.some((item) => item.id === msg.id) ? prev : [...prev, msg]);
     }
+    api.getConversations().then(setConversations).catch(() => {});
   };
 
   const handleReportUser = async (userId: string, category: string, details: string) => {
@@ -268,9 +270,11 @@ export default function Home() {
     setIsDateModalOpen(true);
   };
 
-  const handleOpenMatchChat = (matchId: string) => {
+  const handleOpenMatchChat = async (matchId: string) => {
     setCurrentTab("chat");
-    const conv = conversations.find((c) => c.match_id === matchId);
+    const latest = await api.getConversations().catch(() => conversations);
+    setConversations(latest);
+    const conv = latest.find((c) => c.match_id === matchId);
     if (conv) {
       handleSelectConversation(conv.id);
     }
@@ -284,38 +288,28 @@ export default function Home() {
 
   const handleUpdatePrivacy = async (discoveryEnabled: boolean, showNeighborhoodOnly: boolean) => {
     await api.updatePrivacySettings(discoveryEnabled, showNeighborhoodOnly);
+    setCurrentUser(await api.getMe());
   };
 
   const handleLogout = () => {
     api.setToken(null);
     setCurrentUser(null);
     setCurrentProfile(null);
-    window.location.reload();
+    sessionStorage.setItem("mingle_signed_out", "1");
+    ++feedVersion.current;
+    setDiscoveryProfiles([]);
+    setRequests([]);
+    setMatches([]);
+    setConversations([]);
+    handleSelectConversation(null);
+    setCurrentTab("discover");
+    setIsAuthOpen(true);
   };
 
   const unreadCount = conversations.reduce((acc, c) => acc + (c.unread_count || 0), 0);
 
   return (
-    <div className="min-h-screen bg-[#090D16] text-white flex flex-col font-sans selection:bg-rose-500 selection:text-white">
-      {/* Investor Pitch Tour Desktop Callout Banner */}
-      {!isPitchTourOpen && (
-        <div className="bg-[#0E1424] border-b border-amber-500/20 px-3.5 py-2 text-center text-xs flex items-center justify-center space-x-2.5 text-slate-300">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-            INVESTOR / ACCELERATOR PREVIEW
-          </span>
-          <span className="text-slate-300 hidden sm:inline text-xs">
-            Reviewing Katha for Pre-Seed? Explore our 5 core defensibility proof points &amp; unit economics.
-          </span>
-          <button
-            onClick={() => setIsPitchTourOpen(true)}
-            className="text-amber-400 font-bold hover:text-amber-300 underline underline-offset-2 flex items-center space-x-1 cursor-pointer ml-1 text-xs"
-          >
-            <span>Launch Guided Tour</span>
-            <span aria-hidden="true">&rarr;</span>
-          </button>
-        </div>
-      )}
-
+    <div className="mingle-app">
       {/* Header */}
       <Header
         currentLocale={currentLocale}
@@ -334,10 +328,15 @@ export default function Home() {
         isAdmin={currentUser?.role === "admin"}
       />
 
+      <div className={`app-workspace ${currentTab === "chat" || currentTab === "admin" ? "wide-workspace" : ""}`}>
       {/* Main Tab Area */}
-      <main className="flex-1 w-full max-w-4xl mx-auto">
+      <main className="app-main">
+        {appError && <div role="alert" className="m-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900">{appError}<button className="ml-3 font-semibold underline" onClick={() => { setAppError(null); currentUser ? void loadAllAppData() : void initSession(); }}>Retry</button></div>}
         {currentTab === "discover" && (
           <DiscoveryFeed
+            key={currentUser?.id}
+            noteTarget={noteTarget}
+            onNoteTargetHandled={() => setNoteTarget(null)}
             profiles={discoveryProfiles}
             isLoading={isLoadingFeed}
             onSendConnection={handleSendConnection}
@@ -369,6 +368,7 @@ export default function Home() {
             onSelectConversation={handleSelectConversation}
             onSendMessage={handleSendMessage}
             currentMessages={currentMessages}
+            isLoading={messagesLoading}
             onOpenDatePlan={handleOpenDatePlan}
             onReportUser={handleReportUser}
             onBlockUser={handleBlockUser}
@@ -377,16 +377,16 @@ export default function Home() {
 
         {currentTab === "dates" && (
           <div className="flex flex-col items-center justify-center p-8 text-center min-h-[55vh] max-w-md mx-auto">
-            <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-700 flex items-center justify-center mb-4">
               <CalendarHeart className="w-8 h-8" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Curated Ceylon Date Mode</h3>
-            <p className="text-slate-400 text-xs leading-relaxed max-w-sm mb-6">
+            <h3 className="text-xl font-bold text-[#262131] mb-2 tracking-tight">Curated Ceylon Date Mode</h3>
+            <p className="text-slate-500 text-xs leading-relaxed max-w-sm mb-6">
               Explore safety-vetted Sri Lankan date spots across Colombo, Kandy, Galle Fort &amp; Weligama, with automatic check-in safety timers.
             </p>
             <button
-              onClick={() => setIsDateModalOpen(true)}
-              className="px-5 py-3 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-lg shadow-rose-950/50 transition cursor-pointer"
+              onClick={() => { setDateModalMatchId(null); setIsDateModalOpen(true); }}
+              className="px-5 py-3 rounded-2xl bg-rose-500 mingle-filled hover:bg-rose-600 mingle-filled text-[#262131] font-bold text-xs shadow-sm shadow-rose-950/50 transition cursor-pointer"
             >
               Open Date Mode Planner
             </button>
@@ -395,6 +395,8 @@ export default function Home() {
 
         {currentTab === "profile" && (
           <ProfileView
+            key={currentUser?.id}
+            privacy={currentUser}
             profile={currentProfile}
             cards={connectionCards}
             myCardAnswers={myCardAnswers}
@@ -408,11 +410,23 @@ export default function Home() {
 
         {currentTab === "admin" && <AdminDashboard />}
       </main>
+      <aside className="community-rail" aria-label="Your Mingle space">
+        <button className="rail-profile" onClick={() => currentUser ? setCurrentTab("profile") : setIsAuthOpen(true)}>
+          <span className="rail-avatar">{currentProfile?.photos[0]?.url ? <img src={currentProfile.photos[0].url} alt="" /> : <UserRound size={24} />}</span>
+          <span><strong>{currentProfile?.first_name || "Your next chapter"}</strong><small>{currentProfile?.city || "Starts with a hello."}</small></span><ArrowUpRight size={18} />
+        </button>
+        <section className="rail-introduction"><MingleLogo compact /><h2>Good connections.<br />Real conversations.</h2><p>Find a shared interest. Start with a thoughtful note. See where it goes.</p><button onClick={() => currentUser ? setCurrentTab("profile") : setIsAuthOpen(true)}>Make it more you <ArrowUpRight size={16} /></button></section>
+        <section className="rail-guide"><h3>A more meaningful hello</h3><p><MessageCircle size={19} /><span>Connection cards give you something real to talk about.</span></p><p><ShieldCheck size={19} /><span>You decide who to connect with and when to meet.</span></p></section>
+        <button className="rail-plus" onClick={() => setIsKathaPlusOpen(true)}><span>Meet Mingle Plus<small>A little more possibility.</small></span><ArrowUpRight size={18} /></button>
+        <div className="rail-footer"><button onClick={() => setIsPitchTourOpen(true)}>About Mingle.lk</button><span>Made for connections in Sri Lanka.</span></div>
+      </aside>
+      </div>
 
       {/* Date Mode Modal */}
-      {(isDateModalOpen || currentTab === "dates") && (
+      {isDateModalOpen && (
         <DateModeModal
           matchId={dateModalMatchId}
+          matches={matches}
           onClose={() => {
             setIsDateModalOpen(false);
             if (currentTab === "dates") {
@@ -429,6 +443,7 @@ export default function Home() {
         onClose={() => setIsAuthOpen(false)}
         onSuccess={async (data) => {
           if (data?.access_token) {
+            sessionStorage.removeItem("mingle_signed_out");
             api.setToken(data.access_token);
           }
           await initSession();
@@ -450,7 +465,7 @@ export default function Home() {
         onQuickAdminLogin={handleQuickAdminLogin}
       />
 
-      {/* Katha Plus Micro-Subscription Modal (Issue #4) */}
+      {/* Mingle Plus Micro-Subscription Modal (Issue #4) */}
       <KathaPlusModal
         isOpen={isKathaPlusOpen}
         onClose={() => setIsKathaPlusOpen(false)}
@@ -473,6 +488,7 @@ export default function Home() {
 
       {/* Bottom Navigation */}
       <Navigation
+        locale={currentLocale}
         currentTab={currentTab}
         onTabChange={setCurrentTab}
         requestCount={requests.length}

@@ -58,20 +58,27 @@ class ApiClient {
     const response = await fetch(`${API_BASE}${endpoint}`, {
       ...options,
       headers,
+      signal: options.signal || AbortSignal.timeout(15000),
     });
 
     if (!response.ok) {
       let errDetail = "API request failed";
       try {
         const errorJson = await response.json();
-        errDetail = errorJson.detail || errDetail;
+        errDetail = typeof errorJson.detail === "string" ? errorJson.detail : Array.isArray(errorJson.detail) ? errorJson.detail.map((item: { msg: string }) => item.msg).join(". ") : errDetail;
       } catch (e) {
         // fallback
       }
       throw new Error(errDetail);
     }
 
-    return response.json();
+    return JSON.parse(await response.text(), (key, value) => {
+      // Compatibility for system-owned copy in databases seeded before the rebrand.
+      if (key === "first_name" && value === "Katha Admin") return "Mingle Team";
+      if (key === "bio" && typeof value === "string" && value.startsWith("Platform Administrator & Safety Team at Katha.")) return value.replace("at Katha.", "at Mingle.lk.");
+      if (["name", "active_plan_name", "responder_answer_label"].includes(key) && typeof value === "string") return value.replace(/Katha Plus/g, "Mingle Plus");
+      return value;
+    });
   }
 
   // --- Auth ---
@@ -262,6 +269,10 @@ class ApiClient {
 
   async getLatestDatePlan(matchId: string): Promise<DatePlanItem | null> {
     return this.request(`/dates/match/${matchId}`);
+  }
+
+  async respondToDate(datePlanId: string, accept: boolean): Promise<DatePlanItem> {
+    return this.request(`/dates/${datePlanId}/respond?accept=${accept}`, { method: "POST" });
   }
 
   async createSafetyPlan(datePlanId: string, data: {

@@ -62,7 +62,7 @@ const TOUR_STEPS: TourStep[] = [
     tagline: "High-intent relationship discovery designed for local Sri Lankan realities",
     tab: "discover",
     badge: "Pillar 6: Cold-Start Liquidity",
-    icon: <Compass className="w-5 h-5 text-rose-400" />,
+    icon: <Compass className="w-5 h-5 text-rose-600" />,
     problem:
       "Tinder/Bumble swipe decks expose exact GPS/street locations, triggering privacy paranoia in tight-knit South Asian communities where 'everyone knows everyone'.",
     kathaSolution:
@@ -84,7 +84,7 @@ const TOUR_STEPS: TourStep[] = [
     tagline: "Replacing superficial swiping with authentic values alignment",
     tab: "discover",
     badge: "Pillar 3: Cultural Moat",
-    icon: <HeartHandshake className="w-5 h-5 text-amber-400" />,
+    icon: <HeartHandshake className="w-5 h-5 text-amber-700" />,
     problem:
       "80%+ of dating app matches end in immediate ghosting or awkward 'Hey' messages because users have zero meaningful conversation hooks.",
     kathaSolution:
@@ -106,7 +106,7 @@ const TOUR_STEPS: TourStep[] = [
     tagline: "Transparent algorithmic intelligence without opaque pseudoscience",
     tab: "discover",
     badge: "Pillar 3: Defensible IP",
-    icon: <Sparkles className="w-5 h-5 text-emerald-400" />,
+    icon: <Sparkles className="w-5 h-5 text-emerald-700" />,
     problem:
       "Black-box Elo scores and pseudo-scientific percentages frustrate users and make matches feel arbitrary or transactional.",
     kathaSolution:
@@ -128,7 +128,7 @@ const TOUR_STEPS: TourStep[] = [
     tagline: "Safe digital spaces built to protect women and prevent financial fraud",
     tab: "chat",
     badge: "Pillar 2: Trust & Safety",
-    icon: <ShieldCheck className="w-5 h-5 text-sky-400" />,
+    icon: <ShieldCheck className="w-5 h-5 text-sky-700" />,
     problem:
       "Catfishing, external financial solicitations, and wire fraud run rampant on open chat platforms in emerging markets.",
     kathaSolution:
@@ -150,7 +150,7 @@ const TOUR_STEPS: TourStep[] = [
     tagline: "Bridging digital matches into safe real-world offline dates",
     tab: "dates",
     badge: "Pillar 1 & 5: Revenue & Conversion",
-    icon: <CalendarHeart className="w-5 h-5 text-rose-400" />,
+    icon: <CalendarHeart className="w-5 h-5 text-rose-600" />,
     problem:
       "Only <2% of digital matches ever translate into safe real-world dates due to planning friction, awkward budget discussions, and safety fears.",
     kathaSolution:
@@ -168,11 +168,11 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     id: 6,
-    title: "PayHere Local Gateway Micro-Subscription Engine (Katha Plus)",
+    title: "PayHere Local Gateway Micro-Subscription Engine (Mingle Plus)",
     tagline: "Unlocking South Asian purchasing power with hyper-local currency rails",
     tab: "profile",
     badge: "Pillar 1 & 4: Micro-Subscriptions",
-    icon: <DollarSign className="w-5 h-5 text-amber-400" />,
+    icon: <DollarSign className="w-5 h-5 text-amber-700" />,
     problem:
       "International credit cards have <8% penetration in Sri Lanka. $20/month USD subscriptions (Tinder Gold/Bumble Boost) face extreme forex hurdles and immediate churn.",
     kathaSolution:
@@ -239,7 +239,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
         animate={{ opacity: isMinimized ? 0 : 0.4 }}
         exit={{ opacity: 0 }}
         onClick={() => setIsMinimized(true)}
-        className={`fixed inset-0 bg-slate-950 backdrop-blur-[2px] transition-opacity ${
+        className={`fixed inset-0 bg-[#f4f1f8] backdrop-blur-[2px] transition-opacity ${
           isMinimized ? "pointer-events-none" : "pointer-events-auto"
         }`}
       />
@@ -249,20 +249,20 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="pointer-events-auto max-w-sm mx-auto w-full bg-slate-900/95 border border-amber-500/40 rounded-2xl p-3 shadow-2xl backdrop-blur-xl flex items-center justify-between"
+          className="pointer-events-auto max-w-sm mx-auto w-full bg-[#f4f1f8] border border-amber-500/40 rounded-2xl p-3 shadow-sm backdrop-blur-xl flex items-center justify-between"
         >
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold">
-              <Presentation className="w-4 h-4 text-amber-400" />
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center font-bold">
+              <Presentation className="w-4 h-4 text-amber-700" />
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="text-xs font-bold text-white">Investor Tour</span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-mono">
+                <span className="text-xs font-bold text-[#262131]">Investor Tour</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-800 font-mono">
                   {currentStepIndex + 1}/5
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 truncate max-w-[180px]">
+              <p className="text-[11px] text-slate-500 truncate max-w-[180px]">
                 {currentStep.title}
               </p>
             </div>
@@ -270,14 +270,14 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
           <div className="flex items-center space-x-1">
             <button
               onClick={() => setIsMinimized(false)}
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+              className="p-1.5 rounded-lg bg-[#f4f1f8] hover:bg-slate-700 text-slate-600 transition"
               title="Expand Tour"
             >
               <Maximize2 className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition"
+              className="p-1.5 rounded-lg bg-[#f4f1f8] hover:bg-rose-500/20 text-slate-500 hover:text-rose-600 transition"
               title="Close Tour"
             >
               <X className="w-4 h-4" />
@@ -293,30 +293,30 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 40, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="pointer-events-auto max-w-3xl mx-auto w-full bg-slate-900/95 border border-slate-700/80 rounded-3xl shadow-2xl backdrop-blur-2xl text-white overflow-hidden flex flex-col max-h-[88vh]"
+          className="pointer-events-auto max-w-3xl mx-auto w-full bg-[#f4f1f8] border border-[#e6e1ed]/80 rounded-2xl shadow-sm backdrop-blur-2xl text-[#262131] overflow-hidden flex flex-col max-h-[88vh]"
         >
           {/* Top Investor Proof Bar */}
-          <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-purple-500/15 border-b border-slate-800 px-4 sm:px-6 py-2.5 flex items-center justify-between text-xs">
+          <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-purple-500/15 border-b border-[#e6e1ed] px-4 sm:px-6 py-2.5 flex items-center justify-between text-xs">
             <div className="flex items-center space-x-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
               <span className="font-bold tracking-tight bg-gradient-to-r from-amber-300 via-rose-300 to-amber-200 bg-clip-text text-transparent">
                 PROJECT KATHA (MINGLE.LK)
               </span>
               <span className="hidden sm:inline text-slate-500">•</span>
-              <span className="hidden sm:inline text-slate-400 font-medium">
+              <span className="hidden sm:inline text-slate-500 font-medium">
                 Pre-Seed Guided Investor Walkthrough
               </span>
             </div>
 
             <div className="flex items-center space-x-2">
               {/* Tour / Factsheet Switcher */}
-              <div className="flex items-center bg-slate-950/80 rounded-xl p-0.5 border border-slate-800 text-[11px]">
+              <div className="flex items-center bg-[#f4f1f8] rounded-xl p-0.5 border border-[#e6e1ed] text-[11px]">
                 <button
                   onClick={() => setActiveTabMode("tour")}
                   className={`px-2.5 py-1 rounded-lg font-medium transition ${
                     activeTabMode === "tour"
                       ? "bg-amber-500 text-slate-950 font-bold"
-                      : "text-slate-400 hover:text-slate-200"
+                      : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   Guided Tour
@@ -326,7 +326,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                   className={`px-2.5 py-1 rounded-lg font-medium transition ${
                     activeTabMode === "metrics"
                       ? "bg-amber-500 text-slate-950 font-bold"
-                      : "text-slate-400 hover:text-slate-200"
+                      : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
                   Unit Economics
@@ -335,7 +335,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
 
               <button
                 onClick={() => setIsMinimized(true)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition"
+                className="p-1 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-[#f4f1f8] transition"
                 title="Minimize Tour"
               >
                 <Minimize2 className="w-4 h-4" />
@@ -343,7 +343,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
 
               <button
                 onClick={onClose}
-                className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition"
+                className="p-1 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-[#f4f1f8] transition"
                 title="Exit Tour"
               >
                 <X className="w-4 h-4" />
@@ -352,47 +352,47 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
           </div>
 
           {/* Key Metrics Banner (Requirement: CAC, LTV, Date Conversion Rate) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-4 sm:px-6 py-2.5 bg-slate-950/60 border-b border-slate-800/80">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-2 flex flex-col">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-4 sm:px-6 py-2.5 bg-[#f4f1f8] border-b border-[#e6e1ed]/80">
+            <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-xl p-2 flex flex-col">
+              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
                 CAC (Acquisition)
               </span>
               <div className="flex items-baseline space-x-1 mt-0.5">
-                <span className="text-sm sm:text-base font-extrabold text-emerald-400">$1.40</span>
-                <span className="text-[10px] text-slate-400 font-medium">LKR 420</span>
+                <span className="text-sm sm:text-base font-extrabold text-emerald-700">$1.40</span>
+                <span className="text-[10px] text-slate-500 font-medium">LKR 420</span>
               </div>
               <span className="text-[9px] text-slate-500 mt-0.5">Campus + Cafe Flywheel</span>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-2 flex flex-col">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+            <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-xl p-2 flex flex-col">
+              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
                 Projected LTV
               </span>
               <div className="flex items-baseline space-x-1 mt-0.5">
-                <span className="text-sm sm:text-base font-extrabold text-amber-400">$18.50</span>
-                <span className="text-[10px] text-slate-400 font-medium">LKR 5,600</span>
+                <span className="text-sm sm:text-base font-extrabold text-amber-700">$18.50</span>
+                <span className="text-[10px] text-slate-500 font-medium">LKR 5,600</span>
               </div>
-              <span className="text-[9px] text-emerald-400/90 font-bold mt-0.5">13.2x LTV : CAC</span>
+              <span className="text-[9px] text-emerald-700/90 font-bold mt-0.5">13.2x LTV : CAC</span>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-2 flex flex-col">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+            <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-xl p-2 flex flex-col">
+              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
                 Date Conversion
               </span>
               <div className="flex items-baseline space-x-1 mt-0.5">
-                <span className="text-sm sm:text-base font-extrabold text-rose-400">18.4%</span>
-                <span className="text-[10px] text-rose-300 font-medium">9x Benchmark</span>
+                <span className="text-sm sm:text-base font-extrabold text-rose-600">18.4%</span>
+                <span className="text-[10px] text-rose-700 font-medium">9x Benchmark</span>
               </div>
               <span className="text-[9px] text-slate-500 mt-0.5">Tinder South Asia &lt;2%</span>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-2 flex flex-col">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+            <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-xl p-2 flex flex-col">
+              <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
                 D-7 Retention
               </span>
               <div className="flex items-baseline space-x-1 mt-0.5">
-                <span className="text-sm sm:text-base font-extrabold text-sky-400">64.0%</span>
-                <span className="text-[10px] text-slate-400 font-medium">High Intent</span>
+                <span className="text-sm sm:text-base font-extrabold text-sky-700">64.0%</span>
+                <span className="text-[10px] text-slate-500 font-medium">High Intent</span>
               </div>
               <span className="text-[9px] text-slate-500 mt-0.5">Card Reciprocity Loop</span>
             </div>
@@ -413,7 +413,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                           ? "w-8 bg-gradient-to-r from-amber-400 to-rose-400"
                           : idx < currentStepIndex
                           ? "w-2.5 bg-slate-600 hover:bg-slate-500"
-                          : "w-2.5 bg-slate-800 hover:bg-slate-700"
+                          : "w-2.5 bg-[#f4f1f8] hover:bg-slate-700"
                       }`}
                       title={`Step ${idx + 1}: ${step.title}`}
                     />
@@ -421,10 +421,10 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <span className="text-xs text-amber-300/90 font-semibold uppercase tracking-wider text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
+                  <span className="text-xs text-amber-800/90 font-semibold uppercase tracking-wider text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
                     Step {currentStepIndex + 1} of {TOUR_STEPS.length}
                   </span>
-                  <span className="text-xs text-slate-400 font-medium">
+                  <span className="text-xs text-slate-500 font-medium">
                     {currentStep.badge}
                   </span>
                 </div>
@@ -432,14 +432,14 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
 
               {/* Step Header */}
               <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+                <div className="w-10 h-10 rounded-2xl bg-[#f4f1f8] border border-[#e6e1ed] flex items-center justify-center shrink-0 mt-0.5 shadow-md">
                   {currentStep.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                  <h3 className="text-lg sm:text-xl font-bold text-[#262131] tracking-tight">
                     {currentStep.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
+                  <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
                     {currentStep.tagline}
                   </p>
                 </div>
@@ -450,22 +450,22 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                 {/* The Incumbent Problem */}
                 <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-3.5 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-rose-400 block mb-1">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-rose-600 block mb-1">
                       The Market Failure (Tinder / Bumble)
                     </span>
-                    <p className="text-xs text-slate-300 leading-relaxed">
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       {currentStep.problem}
                     </p>
                   </div>
                 </div>
 
-                {/* The Katha Breakthrough */}
+                {/* The Mingle.lk Breakthrough */}
                 <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-3.5 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400 block mb-1">
-                      The Katha Moat & Solution
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-700 block mb-1">
+                      The Mingle.lk Moat & Solution
                     </span>
-                    <p className="text-xs text-slate-200 leading-relaxed">
+                    <p className="text-xs text-slate-700 leading-relaxed">
                       {currentStep.kathaSolution}
                     </p>
                   </div>
@@ -473,15 +473,15 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
               </div>
 
               {/* Key Proof Points & Live Metric */}
-              <div className="bg-slate-950/70 border border-slate-800 rounded-2xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="space-y-1.5 flex-1">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-amber-300 block">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-amber-800 block">
                     Defensible Technical Implementation:
                   </span>
                   <ul className="space-y-1">
                     {currentStep.keyProofs.map((proof, i) => (
-                      <li key={i} className="flex items-center space-x-2 text-xs text-slate-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <li key={i} className="flex items-center space-x-2 text-xs text-slate-600">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
                         <span>{proof}</span>
                       </li>
                     ))}
@@ -489,28 +489,28 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                 </div>
 
                 {/* Mini Metric Highlight */}
-                <div className="bg-slate-900 border border-slate-700/80 rounded-xl p-3 text-center sm:text-right w-full sm:w-auto shrink-0">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                <div className="bg-[#f4f1f8] border border-[#e6e1ed]/80 rounded-xl p-3 text-center sm:text-right w-full sm:w-auto shrink-0">
+                  <span className="text-[10px] uppercase font-bold text-slate-500 block">
                     {currentStep.investorMetric.label}
                   </span>
-                  <span className="text-lg font-extrabold text-amber-400 block mt-0.5">
+                  <span className="text-lg font-extrabold text-amber-700 block mt-0.5">
                     {currentStep.investorMetric.value}
                   </span>
-                  <span className="text-[10px] text-slate-400 block">
+                  <span className="text-[10px] text-slate-500 block">
                     {currentStep.investorMetric.subtext}
                   </span>
                 </div>
               </div>
 
               {/* Bottom Walkthrough Controls */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-800">
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#e6e1ed]">
                 {/* Persona Switchers for Fast Demo */}
                 <div className="flex items-center space-x-2 text-xs w-full sm:w-auto">
-                  <span className="text-slate-400 text-[11px]">Instant Persona:</span>
+                  <span className="text-slate-500 text-[11px]">Instant Persona:</span>
                   {onQuickDemoLogin && (
                     <button
                       onClick={onQuickDemoLogin}
-                      className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-300 font-semibold border border-slate-700 transition text-[11px]"
+                      className="px-2.5 py-1 rounded-xl bg-[#f4f1f8] hover:bg-slate-700 text-rose-700 font-semibold border border-[#e6e1ed] transition text-[11px]"
                     >
                       Demo User (Senuri)
                     </button>
@@ -518,7 +518,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                   {onQuickAdminLogin && (
                     <button
                       onClick={onQuickAdminLogin}
-                      className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-semibold border border-slate-700 transition text-[11px]"
+                      className="px-2.5 py-1 rounded-xl bg-[#f4f1f8] hover:bg-slate-700 text-amber-800 font-semibold border border-[#e6e1ed] transition text-[11px]"
                     >
                       Admin Dashboard
                     </button>
@@ -530,16 +530,16 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                   {currentStep.id === 6 && onOpenKathaPlus && (
                     <button
                       onClick={onOpenKathaPlus}
-                      className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-xs font-bold text-white shadow-md transition"
+                      className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-xs font-bold text-[#262131] shadow-md transition"
                     >
                       <Zap className="w-3.5 h-3.5" />
-                      <span>Test Katha Plus Gateway</span>
+                      <span>Test Mingle Plus Gateway</span>
                     </button>
                   )}
                   <button
                     disabled={currentStepIndex === 0}
                     onClick={handlePrev}
-                    className="flex items-center space-x-1 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold text-slate-200 transition"
+                    className="flex items-center space-x-1 px-3 py-2 rounded-xl bg-[#f4f1f8] hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold text-slate-700 transition"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>Previous</span>
@@ -548,7 +548,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                   {currentStepIndex < TOUR_STEPS.length - 1 ? (
                     <button
                       onClick={handleNext}
-                      className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-xs font-bold text-white shadow-lg transition"
+                      className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-xs font-bold text-[#262131] shadow-sm transition"
                     >
                       <span>Next Proof Point</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -556,7 +556,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                   ) : (
                     <button
                       onClick={() => setActiveTabMode("metrics")}
-                      className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-xs font-bold text-white shadow-lg transition"
+                      className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-xs font-bold text-[#262131] shadow-sm transition"
                     >
                       <span>View Full Unit Economics</span>
                       <ChevronRight className="w-3.5 h-3.5" />
@@ -569,27 +569,27 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
             /* Unit Economics & GTM Strategy Mode */
             <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
               <div>
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-lg font-bold text-[#262131]">
                   Unit Economics, Monetization &amp; GTM Playbook
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  How Katha generates sustainable LKR cash flow and captures defensible local network effects.
+                <p className="text-xs text-slate-500 mt-0.5">
+                  How Mingle.lk generates sustainable LKR cash flow and captures defensible local network effects.
                 </p>
               </div>
 
               {/* 3 Revenue Streams */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
+                <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5">
                   <div className="flex items-center space-x-2 mb-2">
-                    <div className="w-7 h-7 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
+                    <div className="w-7 h-7 rounded-xl bg-rose-500/20 text-rose-600 flex items-center justify-center font-bold">
                       <Zap className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-xs font-bold text-white">Katha Plus</span>
+                    <span className="text-xs font-bold text-[#262131]">Mingle Plus</span>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    Micro-subscriptions priced at <strong className="text-amber-400">LKR 490/week</strong> or <strong className="text-amber-400">LKR 1,490/month</strong> via PayHere, FriMi, Genie, &amp; Dialog Direct Carrier Billing.
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Micro-subscriptions priced at <strong className="text-amber-700">LKR 490/week</strong> or <strong className="text-amber-700">LKR 1,490/month</strong> via PayHere, FriMi, Genie, &amp; Dialog Direct Carrier Billing.
                   </p>
-                  <ul className="text-[11px] text-slate-400 space-y-1 mt-2">
+                  <ul className="text-[11px] text-slate-500 space-y-1 mt-2">
                     <li>• Unlimited Connection Cards</li>
                     <li>• Who Responded To You</li>
                     <li>• Home District Spotlight</li>
@@ -597,7 +597,7 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                   {onOpenKathaPlus && (
                     <button
                       onClick={onOpenKathaPlus}
-                      className="mt-3 w-full flex items-center justify-center space-x-1.5 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-bold text-xs shadow-sm transition"
+                      className="mt-3 w-full flex items-center justify-center space-x-1.5 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-[#262131] font-bold text-xs shadow-sm transition"
                     >
                       <Zap className="w-3.5 h-3.5" />
                       <span>Test PayHere Checkout</span>
@@ -605,34 +605,34 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
                   )}
                 </div>
 
-                <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
+                <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5">
                   <div className="flex items-center space-x-2 mb-2">
-                    <div className="w-7 h-7 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                    <div className="w-7 h-7 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center font-bold">
                       <DollarSign className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-xs font-bold text-white">Merchant Date Rev-Share</span>
+                    <span className="text-xs font-bold text-[#262131]">Merchant Date Rev-Share</span>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed">
                     10%–15% commission on confirmed date bookings and food/beverage vouchers at vetted partner cafes across Colombo, Galle, and Kandy.
                   </p>
-                  <ul className="text-[11px] text-slate-400 space-y-1 mt-2">
+                  <ul className="text-[11px] text-slate-500 space-y-1 mt-2">
                     <li>• Barefoot Garden Cafe</li>
                     <li>• Black Cat Cafe, Colombo 07</li>
                     <li>• The Empire Cafe, Kandy</li>
                   </ul>
                 </div>
 
-                <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
+                <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5">
                   <div className="flex items-center space-x-2 mb-2">
-                    <div className="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                    <div className="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-700 flex items-center justify-center font-bold">
                       <Users className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-xs font-bold text-white">Diaspora Premium</span>
+                    <span className="text-xs font-bold text-[#262131]">Diaspora Premium</span>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed">
                     Cross-border intentional tier ($14.99/mo) for Sri Lankan diaspora in Melbourne, London, Toronto, and Dubai seeking verified intentional partners.
                   </p>
-                  <ul className="text-[11px] text-slate-400 space-y-1 mt-2">
+                  <ul className="text-[11px] text-slate-500 space-y-1 mt-2">
                     <li>• Diaspora Passport Filter</li>
                     <li>• Tri-lingual Audio Intros</li>
                     <li>• Higher Willingness-to-Pay</li>
@@ -641,26 +641,26 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
               </div>
 
               {/* GTM Rollout Strategy */}
-              <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5">
-                <span className="text-[10px] uppercase font-bold text-amber-300 tracking-wider block mb-2">
+              <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5">
+                <span className="text-[10px] uppercase font-bold text-amber-800 tracking-wider block mb-2">
                   Go-To-Market &amp; Cold-Start Liquidity Strategy
                 </span>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs text-slate-300">
-                  <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                    <strong className="text-white block mb-0.5">Phase 1: Colombo Core</strong>
-                    <p className="text-[11px] text-slate-400">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs text-slate-600">
+                  <div className="bg-[#f4f1f8] p-2.5 rounded-xl border border-[#e6e1ed]">
+                    <strong className="text-[#262131] block mb-0.5">Phase 1: Colombo Core</strong>
+                    <p className="text-[11px] text-slate-500">
                       Hyper-concentrated density in Colombo 03, 04, 05, and 07. Campus ambassadors (SLIIT, APIIT, Colombo Med).
                     </p>
                   </div>
-                  <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                    <strong className="text-white block mb-0.5">Phase 2: Weekend Corridor</strong>
-                    <p className="text-[11px] text-slate-400">
+                  <div className="bg-[#f4f1f8] p-2.5 rounded-xl border border-[#e6e1ed]">
+                    <strong className="text-[#262131] block mb-0.5">Phase 2: Weekend Corridor</strong>
+                    <p className="text-[11px] text-slate-500">
                       Colombo ⟷ Galle Fort &amp; Colombo ⟷ Kandy weekend travel corridors for young professionals.
                     </p>
                   </div>
-                  <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                    <strong className="text-white block mb-0.5">Phase 3: Diaspora Bridge</strong>
-                    <p className="text-[11px] text-slate-400">
+                  <div className="bg-[#f4f1f8] p-2.5 rounded-xl border border-[#e6e1ed]">
+                    <strong className="text-[#262131] block mb-0.5">Phase 3: Diaspora Bridge</strong>
+                    <p className="text-[11px] text-slate-500">
                       Expanding to Australia, UK, and Canada diaspora seeking intentional cultural connections.
                     </p>
                   </div>
@@ -668,10 +668,10 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
               </div>
 
               {/* Bottom Actions */}
-              <div className="pt-2 flex items-center justify-between border-t border-slate-800">
+              <div className="pt-2 flex items-center justify-between border-t border-[#e6e1ed]">
                 <button
                   onClick={() => setActiveTabMode("tour")}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition"
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#f4f1f8] hover:bg-slate-700 text-xs font-semibold text-slate-600 transition"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Back to Guided Tour</span>
@@ -679,9 +679,9 @@ export const InvestorPitchTour: React.FC<InvestorPitchTourProps> = ({
 
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 text-xs font-bold text-white shadow-lg transition"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 text-xs font-bold text-[#262131] shadow-sm transition"
                 >
-                  Explore Katha App Now
+                  Explore Mingle.lk Now
                 </button>
               </div>
             </div>

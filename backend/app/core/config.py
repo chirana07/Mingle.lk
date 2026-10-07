@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(case_sensitive=True, env_file=".env", extra="ignore")
 
-    PROJECT_NAME: str = "Project Katha (Mingle.lk)"
+    PROJECT_NAME: str = "Mingle.lk"
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
     API_V1_STR: str = "/api/v1"

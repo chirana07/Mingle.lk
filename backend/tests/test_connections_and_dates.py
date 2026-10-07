@@ -128,3 +128,38 @@ async def test_connection_and_date_flow(client: AsyncClient):
     assert safety_resp.status_code == 200
     assert safety_resp.json()["trusted_contact_name"] == "Amaya Perera (Sister)"
     assert safety_resp.json()["check_in_status"] == "pending"
+
+    # New UI relies on persistent privacy and both sides of date invitations.
+    h1 = {"Authorization": f"Bearer {t1}"}
+    h2 = {"Authorization": f"Bearer {t2}"}
+    privacy = await client.patch("/api/v1/profiles/me/privacy", json={"discovery_enabled": False, "show_neighborhood_only": False}, headers=h1)
+    assert privacy.status_code == 200
+    me = (await client.get("/api/v1/auth/me", headers=h1)).json()
+    assert me["discovery_enabled"] is False
+    assert me["show_neighborhood_only"] is False
+    response = await client.post(f"/api/v1/dates/{date_plan_id}/respond?accept=true", headers=h1)
+    assert response.status_code == 200
+    assert response.json()["status"] == "accepted"
+    latest = await client.get(f"/api/v1/dates/match/{match_id}", headers=h2)
+    assert latest.json()["status"] == "accepted"
+
+    # Verify persisted history beyond the first page and read receipts.
+    for index in range(52):
+        response = await client.post(f"/api/v1/chat/conversations/{conv_id}/messages", json={"content": f"Demo message {index}"}, headers=h1)
+        assert response.status_code == 200
+    conversations = (await client.get("/api/v1/chat/conversations", headers=h2)).json()
+    assert conversations[0]["unread_count"] == 53
+    history = (await client.get(f"/api/v1/chat/conversations/{conv_id}/messages", headers=h2)).json()
+    assert len(history) == 50
+    assert history[0]["content"] == "Demo message 2"
+    assert history[-1]["content"] == "Demo message 51"
+    assert all(message["read_at"] and not message["is_mine"] for message in history)
+
+    assert (await client.get("/api/v1/chat/conversations", headers=h2)).json()[0]["unread_count"] == 0
+
+    # Blocking must close the conversation even when someone retained its URL.
+    blocked = await client.post("/api/v1/safety/block", json={"blocked_id": u1_id}, headers=h2)
+    assert blocked.status_code == 200
+    assert (await client.get("/api/v1/chat/conversations", headers=h1)).json() == []
+    assert (await client.get(f"/api/v1/chat/conversations/{conv_id}/messages", headers=h1)).status_code == 403
+    assert (await client.post(f"/api/v1/chat/conversations/{conv_id}/messages", json={"content": "Should not send"}, headers=h1)).status_code == 403

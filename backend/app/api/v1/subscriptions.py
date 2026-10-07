@@ -24,13 +24,13 @@ from backend.app.schemas.subscription import (
 )
 from backend.app.services.profile_service import ProfileService
 
-router = APIRouter(prefix="/subscriptions", tags=["Subscriptions & Katha Plus"])
+router = APIRouter(prefix="/subscriptions", tags=["Subscriptions & Mingle Plus"])
 
 # Configured Plans for Issue #4
 PLANS: List[SubscriptionPlanItem] = [
     SubscriptionPlanItem(
         id="katha_plus_weekly",
-        name="Katha Plus Weekly",
+        name="Mingle Plus Weekly",
         billing_cycle="weekly",
         duration_days=7,
         price_lkr=490,
@@ -47,7 +47,7 @@ PLANS: List[SubscriptionPlanItem] = [
     ),
     SubscriptionPlanItem(
         id="katha_plus_monthly_special",
-        name="Katha Plus Launch Special",
+        name="Mingle Plus Launch Special",
         billing_cycle="monthly",
         duration_days=30,
         price_lkr=990,
@@ -64,7 +64,7 @@ PLANS: List[SubscriptionPlanItem] = [
     ),
     SubscriptionPlanItem(
         id="katha_plus_monthly",
-        name="Katha Plus Monthly",
+        name="Mingle Plus Monthly",
         billing_cycle="monthly",
         duration_days=30,
         price_lkr=1490,
@@ -119,7 +119,7 @@ async def get_subscription_status(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Returns current user's Katha Plus entitlement status"""
+    """Returns current user's Mingle Plus entitlement status"""
     now = datetime.now(timezone.utc)
     is_active = current_user.is_katha_plus
     days_rem = None
@@ -175,7 +175,7 @@ async def create_payhere_checkout(
         raise HTTPException(status_code=404, detail="Invalid subscription plan ID.")
 
     profile = await ProfileService.get_profile_by_user_id(db, current_user.id)
-    first_name = profile.first_name if profile else "Katha"
+    first_name = profile.first_name if profile else "Mingle.lk"
     city = req.spotlight_district or (profile.city if profile else "Colombo")
 
     order_id = f"KATHA-{int(datetime.now().timestamp())}-{uuid.uuid4().hex[:6].upper()}"
@@ -239,7 +239,7 @@ async def simulate_payhere_payment(
 ):
     """
     Investor & Demo Sandbox Simulation:
-    Instantly activates Katha Plus for frictionless demonstration of unit economics & entitlements.
+    Instantly activates Mingle Plus for frictionless demonstration of unit economics & entitlements.
     """
     plan = next((p for p in PLANS if p.id == req.plan_id), None)
     if not plan:
@@ -367,8 +367,8 @@ async def get_card_responders(
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Katha Plus Feature: View who responded to your Connection Cards.
-    - If user is Katha Plus: returns full profiles and exact answers.
+    Mingle Plus Feature: View who responded to your Connection Cards.
+    - If user is Mingle Plus: returns full profiles and exact answers.
     - If user is Free: returns teaser/blurred items with locked indication.
     """
     my_profile = await ProfileService.get_profile_by_user_id(db, current_user.id)
@@ -474,7 +474,7 @@ async def get_card_responders(
                     my_answer_key=my_ans.selected_option_key,
                     my_answer_label=my_lbl,
                     responder_answer_key="?",
-                    responder_answer_label="Hidden (Upgrade to Katha Plus)",
+                    responder_answer_label="Hidden (Upgrade to Mingle Plus)",
                     responded_at=oa.updated_at or oa.created_at,
                     is_locked=True,
                     is_identical_choice=is_identical,
@@ -492,11 +492,11 @@ async def set_spotlight_district(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Allows Katha Plus users to change their priority discovery spotlight district"""
+    """Allows Mingle Plus users to change their priority discovery spotlight district"""
     if not current_user.is_katha_plus:
         raise HTTPException(
             status_code=403,
-            detail="Priority district spotlight requires an active Katha Plus subscription.",
+            detail="Priority district spotlight requires an active Mingle Plus subscription.",
         )
 
     current_user.spotlight_district = req.district

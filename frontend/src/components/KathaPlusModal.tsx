@@ -1,4 +1,5 @@
 "use client";
+import { useDialog } from "@/hooks/useDialog";
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -48,6 +49,7 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
   onSuccess,
   initialDistrict = "Colombo",
 }) => {
+  const dialogRef = useDialog(isOpen, onClose);
   const [plans, setPlans] = useState<SubscriptionPlanItem[]>([]);
   const [selectedPlanId, setSelectedPlanId] = useState<string>("katha_plus_monthly_special");
   const [selectedDistrict, setSelectedDistrict] = useState<string>(initialDistrict);
@@ -151,7 +153,7 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
         colors: ["#F59E0B", "#F43F5E", "#10B981", "#EAB308"],
       });
 
-      toast.success("Katha Plus Activated!", {
+      toast.success("Mingle Plus Activated!", {
         description: `Upgraded to ${res.active_plan_name}. 5 extra cards and ${res.spotlight_district} spotlight active!`,
       });
 
@@ -168,35 +170,35 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <motion.div
+      <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Mingle Plus" tabIndex={-1}
         initial={{ y: 40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 40, opacity: 0 }}
         transition={{ type: "spring", damping: 22 }}
-        className="bg-[#0B0F19] border border-amber-500/30 rounded-t-[32px] sm:rounded-[32px] w-full max-w-lg p-6 sm:p-7 text-white max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col"
+        className="bg-white border border-amber-500/30 rounded-t-[32px] sm:rounded-2xl w-full max-w-lg p-6 sm:p-7 text-[#262131] max-h-[92vh] overflow-y-auto shadow-sm flex flex-col"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-white/[0.08]">
+        <div className="flex items-center justify-between pb-3.5 border-b border-[#e6e1ed]">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shadow-lg shadow-amber-950/40 font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shadow-sm font-bold">
               <Crown className="w-5 h-5 stroke-[2.4]" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h3 className="font-extrabold text-base text-white tracking-tight">Katha Plus</h3>
-                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                <h3 className="font-extrabold text-base text-[#262131] tracking-tight">Mingle Plus</h3>
+                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-800 border border-amber-400/30">
                   LKR Micro-Pass
                 </span>
               </div>
-              <p className="text-slate-400 text-xs mt-0.5 font-medium">
-                Proof of LKR Monetization &amp; Unit Economics
+              <p className="text-slate-500 text-xs mt-0.5 font-medium">
+                More ways to find your people
               </p>
             </div>
           </div>
 
           <button
-            onClick={onClose}
-            className="p-2 rounded-xl bg-[#162034] text-slate-400 hover:text-white transition cursor-pointer"
+            aria-label="Close mingle plus" onClick={onClose}
+            className="p-2 rounded-xl bg-[#f4f1f8] text-slate-500 hover:text-[#262131] transition cursor-pointer"
           >
             <X className="w-4 h-4 stroke-[2]" />
           </button>
@@ -206,15 +208,15 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
         {status?.is_katha_plus && (
           <div className="mt-3.5 p-3.5 bg-gradient-to-r from-amber-500/15 to-emerald-500/15 border border-amber-500/30 rounded-2xl flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
-              <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+              <Sparkles className="w-4 h-4 text-amber-700 shrink-0" />
               <div className="text-xs">
-                <span className="font-bold text-amber-300">Active Katha Plus Member</span>
-                <span className="text-slate-400 block text-[11px] mt-0.5">
+                <span className="font-bold text-amber-800">Active Mingle Plus Member</span>
+                <span className="text-slate-500 block text-[11px] mt-0.5">
                   {status.days_remaining} days remaining • Spotlight: {status.spotlight_district || "Colombo"}
                 </span>
               </div>
             </div>
-            <span className="text-[10px] uppercase font-bold text-emerald-400 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+            <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
               Active
             </span>
           </div>
@@ -222,32 +224,32 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
 
         {/* 3 Core Entitlements Showcase */}
         <div className="my-4 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-          <div className="bg-[#121828] border border-white/[0.07] rounded-2xl p-3.5 flex flex-col shadow-sm">
-            <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold mb-2.5">
+          <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5 flex flex-col shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-600 flex items-center justify-center font-bold mb-2.5">
               <Zap className="w-4 h-4" />
             </div>
-            <strong className="text-white text-xs">+5 Extra Cards</strong>
-            <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+            <strong className="text-[#262131] text-xs">+5 Extra Cards</strong>
+            <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
               Unlock 5 extra situational Connection Cards every week.
             </p>
           </div>
 
-          <div className="bg-[#121828] border border-white/[0.07] rounded-2xl p-3.5 flex flex-col shadow-sm">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold mb-2.5">
+          <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5 flex flex-col shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center font-bold mb-2.5">
               <Eye className="w-4 h-4" />
             </div>
-            <strong className="text-white text-xs">Reveal Responders</strong>
-            <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+            <strong className="text-[#262131] text-xs">Reveal Responders</strong>
+            <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
               See who answered your cards and view their exact choices.
             </p>
           </div>
 
-          <div className="bg-[#121828] border border-white/[0.07] rounded-2xl p-3.5 flex flex-col shadow-sm">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold mb-2.5">
+          <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5 flex flex-col shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-700 flex items-center justify-center font-bold mb-2.5">
               <MapPin className="w-4 h-4" />
             </div>
-            <strong className="text-white text-xs">District Spotlight</strong>
-            <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+            <strong className="text-[#262131] text-xs">District Spotlight</strong>
+            <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
               Top discovery feed placement in your selected district.
             </p>
           </div>
@@ -255,7 +257,7 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
 
         {/* Pricing Tiers Selection */}
         <div className="space-y-2 mb-4">
-          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">
+          <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider block">
             Select Your Plan:
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -267,8 +269,8 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
                   onClick={() => setSelectedPlanId(plan.id)}
                   className={`relative p-3.5 rounded-2xl border cursor-pointer transition flex flex-col justify-between active:scale-98 ${
                     isSelected
-                      ? "bg-amber-400/10 border-amber-400 shadow-lg shadow-amber-950/40"
-                      : "bg-[#121828] border-white/[0.07] hover:border-white/[0.14]"
+                      ? "bg-amber-400/10 border-amber-400 shadow-sm"
+                      : "bg-[#f4f1f8] border-[#e6e1ed] hover:border-[#e6e1ed]"
                   }`}
                 >
                   {plan.is_popular && (
@@ -277,12 +279,12 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
                     </span>
                   )}
                   <div>
-                    <h4 className="text-xs font-bold text-white truncate">{plan.name}</h4>
-                    <span className="text-base font-extrabold text-amber-300 block mt-1">
+                    <h4 className="text-xs font-bold text-[#262131] truncate">{plan.name}</h4>
+                    <span className="text-base font-extrabold text-amber-800 block mt-1">
                       {plan.formatted_price}
                     </span>
                   </div>
-                  <span className="text-[10px] text-slate-400 block mt-2 font-medium">
+                  <span className="text-[10px] text-slate-500 block mt-2 font-medium">
                     {plan.duration_days} days access
                   </span>
                 </div>
@@ -292,50 +294,50 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
         </div>
 
         {/* District Spotlight Customization */}
-        <div className="bg-[#121828] border border-white/[0.07] rounded-2xl p-3.5 mb-4">
+        <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5 mb-4">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
-              <MapPin className="w-3.5 h-3.5 text-rose-400 stroke-[2]" />
+            <label className="text-xs font-semibold text-slate-600 flex items-center space-x-1.5">
+              <MapPin className="w-3.5 h-3.5 text-rose-600 stroke-[2]" />
               <span>Choose Your Spotlight District</span>
             </label>
-            <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Priority Boost</span>
+            <span className="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Priority Boost</span>
           </div>
           <select
             value={selectedDistrict}
             onChange={(e) => setSelectedDistrict(e.target.value)}
-            className="w-full bg-[#090D16] border border-white/[0.1] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400 cursor-pointer"
+            className="w-full bg-white border border-[#e6e1ed] rounded-xl px-3 py-2 text-xs text-[#262131] focus:outline-none focus:border-amber-400 cursor-pointer"
           >
             {DISTRICT_OPTIONS.map((dist) => (
-              <option key={dist} value={dist} className="bg-[#090D16]">
+              <option key={dist} value={dist} className="bg-white">
                 {dist}
               </option>
             ))}
           </select>
-          <span className="text-[10px] text-slate-400 block mt-1.5 font-medium">
+          <span className="text-[10px] text-slate-500 block mt-1.5 font-medium">
             Your profile will receive top priority for daters in {selectedDistrict}.
           </span>
         </div>
 
         {/* Local Payment Methods Supported */}
-        <div className="bg-[#121828] border border-white/[0.07] rounded-2xl p-3.5 mb-5">
-          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mb-2.5">
+        <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5 mb-5">
+          <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider block mb-2.5">
             Supported Sri Lankan Payment Rails:
           </span>
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="px-3 py-1 rounded-xl bg-[#090D16] border border-white/[0.08] text-slate-200 text-[11px] font-semibold flex items-center space-x-1.5">
-              <CreditCard className="w-3 h-3 text-amber-400" />
+            <span className="px-3 py-1 rounded-xl bg-white border border-[#e6e1ed] text-slate-700 text-[11px] font-semibold flex items-center space-x-1.5">
+              <CreditCard className="w-3 h-3 text-amber-700" />
               <span>PayHere (Visa / MC)</span>
             </span>
-            <span className="px-3 py-1 rounded-xl bg-[#090D16] border border-white/[0.08] text-slate-200 text-[11px] font-semibold flex items-center space-x-1.5">
-              <Smartphone className="w-3 h-3 text-emerald-400" />
+            <span className="px-3 py-1 rounded-xl bg-white border border-[#e6e1ed] text-slate-700 text-[11px] font-semibold flex items-center space-x-1.5">
+              <Smartphone className="w-3 h-3 text-emerald-700" />
               <span>FriMi</span>
             </span>
-            <span className="px-3 py-1 rounded-xl bg-[#090D16] border border-white/[0.08] text-slate-200 text-[11px] font-semibold flex items-center space-x-1.5">
-              <Sparkles className="w-3 h-3 text-sky-400" />
+            <span className="px-3 py-1 rounded-xl bg-white border border-[#e6e1ed] text-slate-700 text-[11px] font-semibold flex items-center space-x-1.5">
+              <Sparkles className="w-3 h-3 text-sky-700" />
               <span>Genie</span>
             </span>
-            <span className="px-3 py-1 rounded-xl bg-[#090D16] border border-white/[0.08] text-slate-200 text-[11px] font-semibold flex items-center space-x-1.5">
-              <ShieldCheck className="w-3 h-3 text-rose-400" />
+            <span className="px-3 py-1 rounded-xl bg-white border border-[#e6e1ed] text-slate-700 text-[11px] font-semibold flex items-center space-x-1.5">
+              <ShieldCheck className="w-3 h-3 text-rose-600" />
               <span>Carrier Billing (Dialog)</span>
             </span>
           </div>
@@ -347,7 +349,7 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
           <button
             disabled={isLoading || isSimulating}
             onClick={handlePayHereCheckout}
-            className="w-full py-3.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-lg shadow-amber-950/40 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer active:scale-95"
+            className="w-full py-3.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-sm transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer active:scale-95"
           >
             <CreditCard className="w-4 h-4 stroke-[2.2]" />
             <span>
@@ -359,9 +361,9 @@ export const KathaPlusModal: React.FC<KathaPlusModalProps> = ({
           <button
             disabled={isLoading || isSimulating}
             onClick={handleInstantDemoSimulation}
-            className="w-full py-2.5 rounded-2xl bg-[#162034] hover:bg-[#1C2A44] border border-amber-500/30 text-amber-300 font-semibold text-xs transition flex items-center justify-center space-x-1.5 disabled:opacity-50 cursor-pointer active:scale-95"
+            className="w-full py-2.5 rounded-2xl bg-[#f4f1f8] hover:bg-[#f4f1f8] border border-amber-500/30 text-amber-800 font-semibold text-xs transition flex items-center justify-center space-x-1.5 disabled:opacity-50 cursor-pointer active:scale-95"
           >
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <Zap className="w-3.5 h-3.5 text-amber-700" />
             <span>{isSimulating ? "Simulating..." : "⚡ 1-Click Sandbox Approval (Demo)"}</span>
           </button>
         </div>

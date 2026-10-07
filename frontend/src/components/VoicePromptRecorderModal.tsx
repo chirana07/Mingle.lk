@@ -1,5 +1,6 @@
 "use client";
 
+import { useDialog } from "@/hooks/useDialog";
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mic, Square, Play, Pause, RotateCcw, Check, X } from "lucide-react";
@@ -23,6 +24,7 @@ export const VoicePromptRecorderModal: React.FC<VoicePromptRecorderModalProps> =
     onClose,
     onSaveVoiceIntro,
 }) => {
+    const dialogRef = useDialog(isOpen, onClose);
     const [selectedPrompt, setSelectedPrompt] = useState(SRI_LANKAN_PROMPTS[0]);
     const [isRecording, setIsRecording] = useState(false);
     const [recordSeconds, setRecordSeconds] = useState(0);
@@ -30,23 +32,37 @@ export const VoicePromptRecorderModal: React.FC<VoicePromptRecorderModalProps> =
     const [isPlayingPreview, setIsPlayingPreview] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
+    const recordingSession = useRef(0);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
+        setIsRecording(false);
+        setIsPlayingPreview(false);
+        setRecordSeconds(0);
+        setAudioBlobUrl(null);
         return () => {
+            ++recordingSession.current;
             if (timerRef.current) clearInterval(timerRef.current);
+            const recorder = mediaRecorderRef.current;
+            if (recorder) {
+                recorder.onstop = null;
+                if (recorder.state === "recording") recorder.stop();
+                recorder.stream.getTracks().forEach((track) => track.stop());
+            }
         };
-    }, []);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
     const startRecording = async () => {
         try {
+            const session = ++recordingSession.current;
             audioChunksRef.current = [];
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            if (session !== recordingSession.current) { stream.getTracks().forEach(track => track.stop()); return; }
             const mediaRecorder = new MediaRecorder(stream);
             mediaRecorderRef.current = mediaRecorder;
 
@@ -55,11 +71,11 @@ export const VoicePromptRecorderModal: React.FC<VoicePromptRecorderModalProps> =
             };
 
             mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+                const audioBlob = new Blob(audioChunksRef.current, { type: mediaRecorder.mimeType });
                 const reader = new FileReader();
                 reader.readAsDataURL(audioBlob);
                 reader.onloadend = () => {
-                    setAudioBlobUrl(reader.result as string);
+                    if (session === recordingSession.current) setAudioBlobUrl(reader.result as string);
                 };
                 stream.getTracks().forEach((track) => track.stop());
             };
@@ -127,25 +143,25 @@ export const VoicePromptRecorderModal: React.FC<VoicePromptRecorderModalProps> =
 
     return (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-            <motion.div
+            <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Record your voice intro"
                 initial={{ y: "100%", opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: "100%", opacity: 0 }}
-                className="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-white shadow-2xl relative"
+                className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-t-3xl sm:rounded-2xl w-full max-w-md p-5 text-[#262131] shadow-sm relative"
             >
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+                <div className="flex items-center justify-between pb-3 border-b border-[#e6e1ed] mb-4">
                     <div className="flex items-center space-x-2">
                         <Mic className="w-5 h-5 text-rose-500" />
                         <h3 className="font-bold text-sm">15-Second Voice Intro</h3>
                     </div>
-                    <button onClick={onClose} className="p-1 rounded-full bg-slate-800 text-slate-400 hover:text-white">
+                    <button onClick={onClose} className="p-1 rounded-full bg-[#f4f1f8] text-slate-500 hover:text-[#262131]">
                         <X className="w-4 h-4" />
                     </button>
                 </div>
 
                 {/* Prompt Selector */}
                 <div className="mb-4">
-                    <label className="block text-xs font-semibold text-slate-300 mb-2">
+                    <label className="block text-xs font-semibold text-slate-600 mb-2">
                         Select a Voice Prompt Question:
                     </label>
                     <div className="space-y-1.5">
@@ -154,8 +170,8 @@ export const VoicePromptRecorderModal: React.FC<VoicePromptRecorderModalProps> =
                                 key={p.key}
                                 onClick={() => setSelectedPrompt(p)}
                                 className={`w-full text-left p-2.5 rounded-xl text-xs transition border ${selectedPrompt.key === p.key
-                                        ? "bg-rose-500/20 border-rose-500/50 text-white font-semibold"
-                                        : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"
+                                        ? "bg-rose-500/20 border-rose-500/50 text-[#262131] font-semibold"
+                                        : "bg-[#f4f1f8] border-[#e6e1ed] text-slate-500 hover:text-slate-700"
                                     }`}
                             >
                                 {p.label}
@@ -165,11 +181,11 @@ export const VoicePromptRecorderModal: React.FC<VoicePromptRecorderModalProps> =
                 </div>
 
                 {/* Recording Visualizer & Status */}
-                <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 text-center mb-4">
-                    <div className="text-3xl font-mono font-bold text-rose-400 mb-2">
+                <div className="bg-[#f4f1f8] rounded-2xl p-6 border border-[#e6e1ed] text-center mb-4">
+                    <div className="text-3xl font-mono font-bold text-rose-600 mb-2">
                         00:{recordSeconds < 10 ? `0${recordSeconds}` : recordSeconds} / 00:15
                     </div>
-                    <p className="text-[11px] text-slate-400 mb-4">
+                    <p className="text-[11px] text-slate-500 mb-4">
                         {isRecording
                             ? "Recording in progress... Speak clearly into your mic."
                             : audioBlobUrl
@@ -180,9 +196,9 @@ export const VoicePromptRecorderModal: React.FC<VoicePromptRecorderModalProps> =
                     {!audioBlobUrl ? (
                         <button
                             onClick={isRecording ? stopRecording : startRecording}
-                            className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center transition shadow-xl ${isRecording
-                                    ? "bg-rose-600 hover:bg-rose-700 animate-pulse text-white"
-                                    : "bg-gradient-to-r from-rose-500 to-amber-500 hover:scale-105 text-white shadow-rose-900/40"
+                            className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center transition shadow-sm ${isRecording
+                                    ? "bg-rose-600 mingle-filled hover:bg-rose-700 animate-pulse text-[#262131]"
+                                    : "bg-gradient-to-r from-rose-500 to-amber-500 hover:scale-105 text-[#262131] shadow-rose-900/40"
                                 }`}
                         >
                             {isRecording ? <Square className="w-6 h-6 fill-current" /> : <Mic className="w-7 h-7" />}
@@ -197,14 +213,14 @@ export const VoicePromptRecorderModal: React.FC<VoicePromptRecorderModalProps> =
                             />
                             <button
                                 onClick={togglePreviewPlay}
-                                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold flex items-center space-x-1.5"
+                                className="px-4 py-2 rounded-xl bg-[#f4f1f8] hover:bg-slate-700 text-[#262131] text-xs font-semibold flex items-center space-x-1.5"
                             >
                                 {isPlayingPreview ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
                                 <span>{isPlayingPreview ? "Pause" : "Play Preview"}</span>
                             </button>
                             <button
                                 onClick={resetRecording}
-                                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center space-x-1.5"
+                                className="px-4 py-2 rounded-xl bg-[#f4f1f8] hover:bg-slate-700 text-slate-600 text-xs font-semibold flex items-center space-x-1.5"
                             >
                                 <RotateCcw className="w-4 h-4" />
                                 <span>Re-record</span>
@@ -217,7 +233,7 @@ export const VoicePromptRecorderModal: React.FC<VoicePromptRecorderModalProps> =
                 <button
                     disabled={!audioBlobUrl || isSaving}
                     onClick={handleSave}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 text-white font-bold text-xs shadow-lg flex items-center justify-center space-x-1.5 transition disabled:opacity-40"
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 text-[#262131] font-bold text-xs shadow-sm flex items-center justify-center space-x-1.5 transition disabled:opacity-40"
                 >
                     <Check className="w-4 h-4" />
                     <span>{isSaving ? "Saving Voice Intro..." : "Save to Profile"}</span>

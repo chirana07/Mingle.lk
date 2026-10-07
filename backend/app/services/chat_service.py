@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import re
 from fastapi import WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_, or_, desc
+from sqlalchemy import select, and_, or_, desc, update
 from sqlalchemy.orm import selectinload
 from backend.app.models.chat import Conversation, Message
 from backend.app.models.match import Match
@@ -100,23 +100,28 @@ class ChatService:
         c_stmt = select(Conversation).where(Conversation.id == conversation_id).options(selectinload(Conversation.match))
         c_res = await db.execute(c_stmt)
         conv = c_res.scalar_one_or_none()
-        if not conv or (conv.match.user1_id != user_id and conv.match.user2_id != user_id):
+        if not conv or not conv.match.is_active or (conv.match.user1_id != user_id and conv.match.user2_id != user_id):
             raise ValueError("Conversation not found or access denied.")
 
         stmt = (
             select(Message)
             .where(Message.conversation_id == conversation_id)
-            .order_by(Message.created_at.asc())
+            .order_by(Message.created_at.desc())
             .limit(limit)
         )
         res = await db.execute(stmt)
-        messages = res.scalars().all()
+        messages = list(reversed(res.scalars().all()))
 
         # Mark unread messages as read
         now = datetime.now(timezone.utc)
         for m in messages:
             if m.sender_id != user_id and m.read_at is None:
                 m.read_at = now
+        await db.execute(update(Message).where(
+            Message.conversation_id == conversation_id,
+            Message.sender_id != user_id,
+            Message.read_at.is_(None),
+        ).values(read_at=now))
         await db.commit()
 
         return [
@@ -142,7 +147,7 @@ class ChatService:
         c_stmt = select(Conversation).where(Conversation.id == conversation_id).options(selectinload(Conversation.match))
         c_res = await db.execute(c_stmt)
         conv = c_res.scalar_one_or_none()
-        if not conv or (conv.match.user1_id != sender_id and conv.match.user2_id != sender_id):
+        if not conv or not conv.match.is_active or (conv.match.user1_id != sender_id and conv.match.user2_id != sender_id):
             raise ValueError("Conversation not found or access denied.")
 
         # Scan for scam signals

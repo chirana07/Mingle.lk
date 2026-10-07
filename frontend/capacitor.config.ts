@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'lk.mingle.katha',
-  appName: 'Katha (Mingle.lk)',
+  appName: 'Mingle.lk',
   webDir: 'out',
   server: {
     // For live-reloading during mobile app testing on local network,

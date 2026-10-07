@@ -87,33 +87,33 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="pb-24 pt-3 px-3 max-w-md mx-auto space-y-4">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg flex items-center justify-between">
+      <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-4 shadow-sm flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+          <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-700 flex items-center justify-center font-bold">
             <BarChart3 className="w-4 h-4" />
           </div>
           <div>
-            <h2 className="text-white font-bold text-sm">Investor & Admin Center</h2>
-            <p className="text-slate-400 text-[10px]">Real-time Sri Lankan platform KPIs & Safety</p>
+            <h2 className="text-[#262131] font-bold text-sm">Investor & Admin Center</h2>
+            <p className="text-slate-500 text-[10px]">Real-time Sri Lankan platform KPIs & Safety</p>
           </div>
         </div>
 
         <button
           onClick={loadData}
           disabled={isLoading}
-          className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+          className="p-1.5 rounded-xl bg-[#f4f1f8] hover:bg-slate-700 text-slate-600 transition"
           title="Refresh metrics"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-rose-400" : ""}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-rose-600" : ""}`} />
         </button>
       </div>
 
       {/* Admin Tab Switcher */}
-      <div className="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-2xl border border-slate-800 text-xs font-semibold">
+      <div className="grid grid-cols-3 gap-1 bg-[#f4f1f8] p-1 rounded-2xl border border-[#e6e1ed] text-xs font-semibold">
         <button
           onClick={() => setActiveTab("metrics")}
           className={`py-2 rounded-xl transition ${
-            activeTab === "metrics" ? "bg-amber-500 text-slate-950 shadow" : "text-slate-400 hover:text-slate-200"
+            activeTab === "metrics" ? "bg-amber-500 text-slate-950 shadow" : "text-slate-500 hover:text-slate-700"
           }`}
         >
           Key Metrics
@@ -121,7 +121,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setActiveTab("moderation")}
           className={`py-2 rounded-xl transition flex items-center justify-center space-x-1 ${
-            activeTab === "moderation" ? "bg-rose-600 text-white shadow" : "text-slate-400 hover:text-slate-200"
+            activeTab === "moderation" ? "bg-rose-600 mingle-filled text-[#262131] shadow" : "text-slate-500 hover:text-slate-700"
           }`}
         >
           <span>Moderation</span>
@@ -134,7 +134,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setActiveTab("users")}
           className={`py-2 rounded-xl transition ${
-            activeTab === "users" ? "bg-slate-800 text-white shadow" : "text-slate-400 hover:text-slate-200"
+            activeTab === "users" ? "bg-[#f4f1f8] text-[#262131] shadow" : "text-slate-500 hover:text-slate-700"
           }`}
         >
           User Accounts
@@ -145,70 +145,70 @@ export const AdminDashboard: React.FC = () => {
       {activeTab === "metrics" && metrics && (
         <div className="space-y-3">
           {/* North Star Metric Banner */}
-          <div className="bg-gradient-to-br from-rose-950/40 via-slate-900 to-amber-950/40 border border-rose-500/30 rounded-3xl p-4 shadow-xl">
-            <span className="text-[10px] uppercase font-bold text-amber-400 tracking-wider block mb-1">
+          <div className="bg-gradient-to-br from-rose-950/40 via-slate-900 to-amber-950/40 border border-rose-500/30 rounded-2xl p-4 shadow-sm">
+            <span className="text-[10px] uppercase font-bold text-amber-700 tracking-wider block mb-1">
               North-Star Conversion Funnel
             </span>
             <div className="flex items-baseline justify-between mt-2">
               <div>
-                <span className="text-3xl font-extrabold text-white">{metrics.dates_planned}</span>
-                <span className="text-xs text-rose-300 ml-1.5 font-medium">Safe Dates Planned</span>
+                <span className="text-3xl font-extrabold text-[#262131]">{metrics.dates_planned}</span>
+                <span className="text-xs text-rose-700 ml-1.5 font-medium">Safe Dates Planned</span>
               </div>
               <div className="text-right">
-                <span className="text-xs text-slate-400 block">Conv-to-Date</span>
-                <span className="text-base font-bold text-emerald-400">{metrics.conversation_to_date_rate}%</span>
+                <span className="text-xs text-slate-500 block">Conv-to-Date</span>
+                <span className="text-base font-bold text-emerald-700">{metrics.conversation_to_date_rate}%</span>
               </div>
             </div>
-            <p className="text-[11px] text-slate-300 mt-2 leading-tight">
+            <p className="text-[11px] text-slate-600 mt-2 leading-tight">
               Proves user journey progress: Discover → Understand → Connect → Safe Real-World Meeting.
             </p>
           </div>
 
           {/* Grid Stats */}
           <div className="grid grid-cols-2 gap-2.5">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3">
-              <span className="text-[10px] text-slate-400 block mb-1">Total Users (Sri Lanka)</span>
+            <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3">
+              <span className="text-[10px] text-slate-500 block mb-1">Total Users (Sri Lanka)</span>
               <div className="flex items-baseline space-x-1.5">
-                <span className="text-2xl font-bold text-white">{metrics.total_users}</span>
-                <span className="text-[10px] text-emerald-400 font-semibold">Active seed</span>
+                <span className="text-2xl font-bold text-[#262131]">{metrics.total_users}</span>
+                <span className="text-[10px] text-emerald-700 font-semibold">Active seed</span>
               </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3">
-              <span className="text-[10px] text-slate-400 block mb-1">Verified Users</span>
+            <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3">
+              <span className="text-[10px] text-slate-500 block mb-1">Verified Users</span>
               <div className="flex items-baseline space-x-1.5">
-                <span className="text-2xl font-bold text-white">{metrics.verified_users}</span>
-                <span className="text-[10px] text-sky-400 font-semibold">Phone/ID</span>
+                <span className="text-2xl font-bold text-[#262131]">{metrics.verified_users}</span>
+                <span className="text-[10px] text-sky-700 font-semibold">Phone/ID</span>
               </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3">
-              <span className="text-[10px] text-slate-400 block mb-1">Mutual Connections</span>
+            <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3">
+              <span className="text-[10px] text-slate-500 block mb-1">Mutual Connections</span>
               <div className="flex items-baseline space-x-1.5">
-                <span className="text-2xl font-bold text-white">{metrics.matches_created}</span>
-                <span className="text-[10px] text-rose-400 font-semibold">Matched</span>
+                <span className="text-2xl font-bold text-[#262131]">{metrics.matches_created}</span>
+                <span className="text-[10px] text-rose-600 font-semibold">Matched</span>
               </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3">
-              <span className="text-[10px] text-slate-400 block mb-1">Chat Start Rate</span>
+            <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3">
+              <span className="text-[10px] text-slate-500 block mb-1">Chat Start Rate</span>
               <div className="flex items-baseline space-x-1.5">
-                <span className="text-2xl font-bold text-white">{metrics.match_to_conversation_rate}%</span>
-                <span className="text-[10px] text-amber-400 font-semibold">Bench &gt;50%</span>
+                <span className="text-2xl font-bold text-[#262131]">{metrics.match_to_conversation_rate}%</span>
+                <span className="text-[10px] text-amber-700 font-semibold">Bench &gt;50%</span>
               </div>
             </div>
           </div>
 
           {/* Platform Safety Health */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between">
+          <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3.5 flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+              <ShieldCheck className="w-5 h-5 text-emerald-700" />
               <div>
-                <span className="text-xs font-bold text-white block">Platform Safety Health</span>
-                <span className="text-[10px] text-slate-400">Incident rate: {metrics.safety_incident_rate}%</span>
+                <span className="text-xs font-bold text-[#262131] block">Platform Safety Health</span>
+                <span className="text-[10px] text-slate-500">Incident rate: {metrics.safety_incident_rate}%</span>
               </div>
             </div>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 text-[10px] font-bold border border-emerald-500/30">
               Healthy
             </span>
           </div>
@@ -219,39 +219,39 @@ export const AdminDashboard: React.FC = () => {
       {activeTab === "moderation" && (
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h3 className="text-white font-bold text-xs">Flagged Cases & Reports</h3>
-            <span className="text-[10px] text-slate-400">{reports.length} total reports</span>
+            <h3 className="text-[#262131] font-bold text-xs">Flagged Cases & Reports</h3>
+            <span className="text-[10px] text-slate-500">{reports.length} total reports</span>
           </div>
 
           {reports.length === 0 ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center text-xs text-slate-400">
+            <div className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-6 text-center text-xs text-slate-500">
               No reports filed yet. The community is healthy!
             </div>
           ) : (
             <div className="space-y-2.5">
               {reports.map((r) => (
-                <div key={r.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-3 space-y-2 text-xs">
+                <div key={r.id} className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3 space-y-2 text-xs">
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 text-[10px] font-bold border border-rose-500/30">
+                      <span className="px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-700 text-[10px] font-bold border border-rose-500/30">
                         {r.category}
                       </span>
-                      <span className="text-[10px] text-slate-400 ml-2">
+                      <span className="text-[10px] text-slate-500 ml-2">
                         {new Date(r.created_at).toLocaleDateString()}
                       </span>
                     </div>
                     <span
                       className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         r.status === "pending"
-                          ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                          : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                          ? "bg-amber-500/20 text-amber-800 border border-amber-500/30"
+                          : "bg-emerald-500/20 text-emerald-700 border border-emerald-500/30"
                       }`}
                     >
                       {r.status}
                     </span>
                   </div>
 
-                  <p className="text-slate-200 bg-slate-950 p-2.5 rounded-xl border border-slate-850">
+                  <p className="text-slate-700 bg-[#f4f1f8] p-2.5 rounded-xl border border-slate-850">
                     &quot;{r.details}&quot;
                   </p>
 
@@ -259,13 +259,13 @@ export const AdminDashboard: React.FC = () => {
                     <div className="flex space-x-2 pt-1">
                       <button
                         onClick={() => handleUpdateReport(r.id, "action_taken")}
-                        className="flex-1 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-[11px] transition"
+                        className="flex-1 py-1.5 rounded-xl bg-rose-600 mingle-filled hover:bg-rose-700 text-[#262131] font-semibold text-[11px] transition"
                       >
                         Action Taken (Sanction)
                       </button>
                       <button
                         onClick={() => handleUpdateReport(r.id, "dismissed")}
-                        className="py-1.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] transition"
+                        className="py-1.5 px-3 rounded-xl bg-[#f4f1f8] hover:bg-slate-700 text-slate-600 text-[11px] transition"
                       >
                         Dismiss
                       </button>
@@ -283,33 +283,33 @@ export const AdminDashboard: React.FC = () => {
         <div className="space-y-3">
           {/* Search box */}
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-3" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by phone, email, or user ID..."
-              className="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+              className="w-full bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl pl-9 pr-3 py-2 text-xs text-[#262131] placeholder-slate-500 focus:outline-none focus:border-amber-500"
             />
           </div>
 
           <div className="space-y-2">
             {filteredUsers.slice(0, 15).map((u) => (
-              <div key={u.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-3 text-xs space-y-1.5">
+              <div key={u.id} className="bg-[#f4f1f8] border border-[#e6e1ed] rounded-2xl p-3 text-xs space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-white truncate max-w-[200px]">
+                  <span className="font-bold text-[#262131] truncate max-w-[200px]">
                     {u.phone || u.email || "User " + u.id.slice(0, 8)}
                   </span>
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      u.status === "active" ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"
+                      u.status === "active" ? "bg-emerald-500/20 text-emerald-700" : "bg-rose-500/20 text-rose-700"
                     }`}
                   >
                     {u.status}
                   </span>
                 </div>
 
-                <div className="flex items-center space-x-2 text-[11px] text-slate-400">
+                <div className="flex items-center space-x-2 text-[11px] text-slate-500">
                   <span>Role: {u.role}</span>
                   <span>•</span>
                   <span>Verified: {u.is_phone_verified ? "Phone ✓" : "No"}</span>
@@ -319,7 +319,7 @@ export const AdminDashboard: React.FC = () => {
                 <div className="flex space-x-1.5 pt-1">
                   <button
                     onClick={() => handleToggleVerifyUser(u.id, u.is_selfie_verified)}
-                    className="py-1 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 text-[10px] font-medium border border-slate-700 transition"
+                    className="py-1 px-2.5 rounded-lg bg-[#f4f1f8] hover:bg-slate-700 text-sky-700 text-[10px] font-medium border border-[#e6e1ed] transition"
                   >
                     {u.is_selfie_verified ? "Revoke Photo Badge" : "Grant Photo Badge"}
                   </button>
@@ -327,14 +327,14 @@ export const AdminDashboard: React.FC = () => {
                   {u.status === "active" ? (
                     <button
                       onClick={() => handleUpdateUserStatus(u.id, "suspended")}
-                      className="py-1 px-2.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-[10px] font-medium border border-rose-800 transition"
+                      className="py-1 px-2.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-700 text-[10px] font-medium border border-rose-800 transition"
                     >
                       Suspend
                     </button>
                   ) : (
                     <button
                       onClick={() => handleUpdateUserStatus(u.id, "active")}
-                      className="py-1 px-2.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 text-[10px] font-medium border border-emerald-800 transition"
+                      className="py-1 px-2.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900 text-emerald-700 text-[10px] font-medium border border-emerald-800 transition"
                     >
                       Restore Active
                     </button>

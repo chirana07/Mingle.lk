@@ -71,3 +71,24 @@ async def get_matches(
 ):
     """List all mutual matches with compatibility reasons and suggested starters"""
     return await ConnectionService.get_user_matches(db, current_user.id)
+
+
+@router.post("/{request_id}/decline")
+async def decline_connection(
+    request_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    from sqlalchemy import select
+    from backend.app.models.match import ConnectionRequest
+    result = await db.execute(select(ConnectionRequest).where(
+        ConnectionRequest.id == request_id,
+        ConnectionRequest.receiver_id == current_user.id,
+        ConnectionRequest.status == "pending",
+    ))
+    request = result.scalar_one_or_none()
+    if not request:
+        raise HTTPException(status_code=400, detail="Connection request not found or already processed.")
+    request.status = "rejected"
+    await db.commit()
+    return {"status": "rejected", "message": "Connection request declined."}

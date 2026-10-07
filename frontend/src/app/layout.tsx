@@ -14,17 +14,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Katha (කතා) — Sri Lankan Relationship Discovery Platform",
+  title: "Mingle.lk — Sri Lankan Relationship Discovery Platform",
   description: "Discover compatible people based on personality, intentions, lifestyle, and shared values. Engineered for Sri Lanka.",
-  keywords: ["Dating Sri Lanka", "Colombo Dating", "Katha dating app", "Mingle.lk", "Sri Lanka relationships"],
-  authors: [{ name: "Katha Team" }],
+  keywords: ["Dating Sri Lanka", "Colombo Dating", "Mingle.lk dating app", "Mingle.lk", "Sri Lanka relationships"],
+  manifest: "/manifest.json",
+  icons: { icon: "/mingle-icon.svg", apple: "/icon-192.png" },
+  authors: [{ name: "Mingle.lk Team" }],
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  themeColor: "#090D16",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
@@ -34,8 +35,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full bg-[#090D16] text-slate-100 flex flex-col font-sans selection:bg-rose-500 selection:text-white">
-        <Toaster richColors position="top-center" theme="dark" closeButton />
+      <body className="min-h-full bg-[#faf9fc] text-slate-900 flex flex-col font-sans selection:bg-rose-500 selection:text-white">
+        <Toaster richColors position="top-center" theme="light" closeButton />
         {children}
       </body>
     </html>

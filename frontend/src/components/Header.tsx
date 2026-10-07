@@ -1,21 +1,9 @@
 "use client";
-
-import React from "react";
-import { Locale } from "@/i18n";
+import React, { useState } from "react";
+import { Locale, getTranslation } from "@/i18n";
 import { NavTab } from "./Navigation";
-import {
-  Sparkles,
-  Globe,
-  LogOut,
-  Compass,
-  UserPlus,
-  MessageCircle,
-  CalendarHeart,
-  User,
-  BarChart3,
-  Presentation,
-  Crown,
-} from "lucide-react";
+import { MingleLogo } from "./MingleLogo";
+import { Compass, Heart, MessageCircle, CalendarHeart, User, BarChart3, Presentation, Crown, LogOut, Globe, LogIn, Menu, X } from "lucide-react";
 
 interface HeaderProps {
   currentLocale: Locale;
@@ -34,209 +22,45 @@ interface HeaderProps {
   isAdmin?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({
-  currentLocale,
-  onLocaleChange,
-  currentUser,
-  onQuickDemoLogin,
-  onQuickAdminLogin,
-  onLogout,
-  onOpenAuth,
-  onOpenKathaPlus,
-  currentTab = "discover",
-  onTabChange,
-  onTogglePitchDrawer,
-  requestCount = 0,
-  unreadCount = 0,
-  isAdmin = false,
-}) => {
-  return (
-    <header className="sticky top-0 z-40 bg-[#090D16]/90 backdrop-blur-xl border-b border-white/[0.07] text-white px-3 sm:px-6 py-2.5 transition-all">
-      <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-        {/* Brand */}
-        <div
-          onClick={() => onTabChange?.("discover")}
-          className="flex items-center space-x-3 cursor-pointer group select-none shrink-0"
-        >
-          <div className="relative w-9 h-9 rounded-2xl bg-gradient-to-br from-rose-500 to-amber-500 p-[1.5px] shadow-lg shadow-rose-950/50 group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-[#0E1424] rounded-[14px] flex items-center justify-center">
-              <span className="font-bold text-base text-rose-300 font-sans tracking-tight">ක</span>
-            </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#090D16]" />
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center space-x-1.5">
-              <span className="font-bold text-lg tracking-tight text-white group-hover:text-rose-200 transition-colors">
-                Katha
-              </span>
-              <span className="text-[10px] font-semibold text-rose-400/90 font-mono tracking-wider">
-                කතා
-              </span>
-            </div>
-            <span className="text-[9px] uppercase tracking-widest font-semibold text-slate-400">
-              Sri Lanka · Mingle.lk
-            </span>
-          </div>
-        </div>
-
-        {/* Desktop Segmented Navigation */}
-        {onTabChange && (
-          <nav className="hidden md:flex items-center space-x-1 bg-[#101623]/90 p-1 rounded-2xl border border-white/[0.07] shadow-inner">
-            <button
-              onClick={() => onTabChange("discover")}
-              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                currentTab === "discover"
-                  ? "bg-rose-500 text-white font-semibold shadow-md shadow-rose-950/40"
-                  : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
-              }`}
-            >
-              <Compass className="w-4 h-4 stroke-[2]" />
-              <span>Discover</span>
-            </button>
-
-            <button
-              onClick={() => onTabChange("requests")}
-              className={`relative flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                currentTab === "requests"
-                  ? "bg-rose-500 text-white font-semibold shadow-md shadow-rose-950/40"
-                  : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
-              }`}
-            >
-              <UserPlus className="w-4 h-4 stroke-[2]" />
-              <span>Requests</span>
-              {requestCount > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 text-[10px] font-bold">
-                  {requestCount}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => onTabChange("chat")}
-              className={`relative flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                currentTab === "chat"
-                  ? "bg-rose-500 text-white font-semibold shadow-md shadow-rose-950/40"
-                  : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
-              }`}
-            >
-              <MessageCircle className="w-4 h-4 stroke-[2]" />
-              <span>Messages</span>
-              {unreadCount > 0 && (
-                <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
-              )}
-            </button>
-
-            <button
-              onClick={() => onTabChange("dates")}
-              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                currentTab === "dates"
-                  ? "bg-rose-500 text-white font-semibold shadow-md shadow-rose-950/40"
-                  : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
-              }`}
-            >
-              <CalendarHeart className="w-4 h-4 stroke-[2]" />
-              <span>Date Mode</span>
-            </button>
-
-            <button
-              onClick={() => onTabChange("profile")}
-              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                currentTab === "profile"
-                  ? "bg-rose-500 text-white font-semibold shadow-md shadow-rose-950/40"
-                  : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
-              }`}
-            >
-              <User className="w-4 h-4 stroke-[2]" />
-              <span>Profile</span>
-            </button>
-
-            {isAdmin && (
-              <button
-                onClick={() => onTabChange("admin")}
-                className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                  currentTab === "admin"
-                    ? "bg-amber-400 text-slate-950 font-bold shadow-md shadow-amber-950/40"
-                    : "text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/10"
-                }`}
-              >
-                <BarChart3 className="w-4 h-4 stroke-[2]" />
-                <span>Admin</span>
-              </button>
-            )}
-          </nav>
-        )}
-
-        {/* Right Actions */}
-        <div className="flex items-center space-x-2 shrink-0">
-          {/* Katha Plus Micro-Pass Button */}
-          {onOpenKathaPlus && (
-            <button
-              onClick={onOpenKathaPlus}
-              className="flex items-center space-x-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 hover:brightness-105 transition shadow-md shadow-amber-950/30 cursor-pointer active:scale-95"
-              title="Katha Plus LKR Micro-Subscription"
-            >
-              <Crown className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span className="hidden sm:inline">Katha Plus</span>
-            </button>
-          )}
-
-          {/* Investor Pitch Tour Launcher */}
-          {onTogglePitchDrawer && (
-            <button
-              onClick={onTogglePitchDrawer}
-              className="flex items-center space-x-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-amber-300 border border-amber-500/30 transition shadow-sm cursor-pointer active:scale-95"
-              title="Interactive Investor Guided Pitch Walkthrough"
-            >
-              <Presentation className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden lg:inline text-xs">Pitch Deck</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            </button>
-          )}
-
-          {/* Language Switcher */}
-          <div className="relative flex items-center bg-[#101623] rounded-xl px-2 py-1 border border-white/[0.08]">
-            <Globe className="w-3.5 h-3.5 text-slate-400 mr-1.5 shrink-0" />
-            <select
-              value={currentLocale}
-              onChange={(e) => onLocaleChange(e.target.value as Locale)}
-              className="bg-transparent text-xs text-slate-200 font-semibold focus:outline-none cursor-pointer pr-1"
-            >
-              <option value="en" className="bg-[#101623] text-white">EN</option>
-              <option value="si" className="bg-[#101623] text-white">සිංහල</option>
-              <option value="ta" className="bg-[#101623] text-white">தமிழ்</option>
-            </select>
-          </div>
-
-          {/* User state / Quick Demo switcher */}
-          {currentUser ? (
-            <div className="flex items-center space-x-1.5">
-              <button
-                onClick={onLogout}
-                title="Log out"
-                className="p-2 rounded-xl bg-[#101623] hover:bg-white/[0.08] text-slate-400 hover:text-rose-400 border border-white/[0.08] transition active:scale-95"
-              >
-                <LogOut className="w-4 h-4 stroke-[2]" />
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-1.5">
-              <button
-                onClick={onQuickDemoLogin}
-                className="text-xs font-semibold bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl shadow-md shadow-rose-950/40 transition flex items-center space-x-1 active:scale-95"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>Demo User</span>
-              </button>
-              <button
-                onClick={onOpenAuth}
-                className="text-xs font-medium bg-[#101623] hover:bg-white/[0.08] text-slate-300 px-3 py-1.5 rounded-xl border border-white/[0.08] transition active:scale-95"
-              >
-                Log In
-              </button>
-            </div>
-          )}
-        </div>
+export const Header: React.FC<HeaderProps> = ({ currentLocale, onLocaleChange, currentUser, onQuickDemoLogin, onQuickAdminLogin, onLogout, onOpenAuth, onOpenKathaPlus, currentTab = "discover", onTabChange, onTogglePitchDrawer, requestCount = 0, unreadCount = 0, isAdmin = false }) => {
+  const t = getTranslation(currentLocale);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const tabs: { id: NavTab; label: string; icon: typeof Compass; count?: number }[] = [
+    { id: "discover", label: t.nav.discover, icon: Compass },
+    { id: "requests", label: t.nav.connections, icon: Heart, count: requestCount },
+    { id: "chat", label: t.nav.chat, icon: MessageCircle, count: unreadCount },
+    { id: "dates", label: t.nav.dates, icon: CalendarHeart },
+    { id: "profile", label: t.nav.profile, icon: User },
+    ...(isAdmin ? [{ id: "admin" as NavTab, label: t.nav.admin, icon: BarChart3 }] : []),
+  ];
+  return <>
+    <header className="mobile-header">
+      <button onClick={() => onTabChange?.("discover")} aria-label="Mingle.lk home"><MingleLogo /></button>
+      <div className="mobile-header-actions">
+        <button className="icon-button" onClick={() => onTabChange?.("requests")} aria-label={`Connections, ${requestCount} pending`}><Heart size={23} />{requestCount > 0 && <span className="notification-dot" />}</button>
+        <button className="icon-button" onClick={() => onTabChange?.("chat")} aria-label={`Messages, ${unreadCount} unread`}><MessageCircle size={23} />{unreadCount > 0 && <span className="notification-dot" />}</button>
+        <button className="icon-button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} aria-controls="mobile-account-menu" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={22} /> : <Menu size={22} />}</button>
       </div>
+      {menuOpen && <div className="mobile-account-menu" id="mobile-account-menu">
+        <label>Language<select aria-label="Mobile language" value={currentLocale} onChange={e => onLocaleChange(e.target.value as Locale)}><option value="en">English</option><option value="si">සිංහල</option><option value="ta">தமிழ்</option></select></label>
+        <button onClick={() => { onOpenKathaPlus?.(); setMenuOpen(false); }}><Crown size={18} />Mingle Plus</button>
+        <button onClick={() => { onTogglePitchDrawer?.(); setMenuOpen(false); }}><Presentation size={18} />Investor tour</button>
+        {currentUser ? <button onClick={onLogout}><LogOut size={18} />Log out</button> : <><button onClick={() => { onQuickDemoLogin(); setMenuOpen(false); }}>Try demo</button><button onClick={() => { onOpenAuth(); setMenuOpen(false); }}>Log in</button></>}
+      </div>}
     </header>
-  );
+    <aside className="desktop-sidebar">
+      <button className="sidebar-brand" onClick={() => onTabChange?.("discover")} aria-label="Mingle.lk home"><MingleLogo /></button>
+      <nav aria-label="Main navigation" className="sidebar-nav">
+        {tabs.map(({id,label,icon: Icon,count}) => <button key={id} aria-current={currentTab === id ? "page" : undefined} onClick={() => onTabChange?.(id)} className={`sidebar-link ${currentTab === id ? "active" : ""}`}><Icon size={23} strokeWidth={currentTab === id ? 2.2 : 1.7} /><span>{label}</span>{!!count && <span className="nav-badge">{count}</span>}</button>)}
+      </nav>
+      {onOpenKathaPlus && <button className="sidebar-plus" onClick={onOpenKathaPlus}><Crown size={20} /><span>Mingle Plus</span><span className="plus-symbol">+</span></button>}
+      <div className="sidebar-bottom">
+        <label className="sidebar-language"><Globe size={19} /><span className="sr-only">Language</span><select aria-label="Language" value={currentLocale} onChange={e => onLocaleChange(e.target.value as Locale)}><option value="en">English</option><option value="si">සිංහල</option><option value="ta">தமிழ்</option></select></label>
+        {onTogglePitchDrawer && <button className="sidebar-secondary" onClick={onTogglePitchDrawer}><Presentation size={19} /><span>Investor tour</span></button>}
+        {currentUser ? <button className="sidebar-secondary" onClick={onLogout}><LogOut size={19} /><span>Log out</span></button> : <><button className="sidebar-secondary" onClick={onQuickDemoLogin}><User size={19} /><span>Try demo</span></button><button className="sidebar-secondary" onClick={onOpenAuth}><LogIn size={19} /><span>Log in</span></button></>}
+        <button className="sidebar-secondary" onClick={onQuickAdminLogin}><BarChart3 size={19} /><span>Admin demo</span></button>
+        <p className="sidebar-signoff">A little closer to your people.</p>
+      </div>
+    </aside>
+  </>;
 };

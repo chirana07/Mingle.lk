@@ -1,4 +1,5 @@
 "use client";
+import { useDialog } from "@/hooks/useDialog";
 
 import React from "react";
 import { motion } from "framer-motion";
@@ -8,6 +9,7 @@ export const SRI_LANKAN_DISTRICTS = [
     "All",
     "Colombo",
     "Gampaha",
+    "Negombo",
     "Kalutara",
     "Kandy",
     "Matale",
@@ -35,6 +37,7 @@ export const SRI_LANKAN_DISTRICTS = [
 
 export const INTENT_OPTIONS = [
     { value: "all", label: "All Relationship Intents" },
+    { value: "Serious relationship", label: "Serious Relationship" },
     { value: "Dating intentionally", label: "Dating Intentionally" },
     { value: "Long-term with marriage mindset", label: "Long-term (Marriage Mindset)" },
     { value: "Open to seeing where it goes", label: "Open to Exploring" },
@@ -75,6 +78,7 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
     onResetAll,
     onApply,
 }) => {
+  const dialogRef = useDialog(isOpen, onClose);
     if (!isOpen) return null;
 
     const activeCount =
@@ -83,37 +87,36 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
         (selectedLifestyle !== "all" ? 1 : 0);
 
     return (
-        <div className="fixed inset-0 z-50 bg-[#090D16]/80 backdrop-blur-md flex justify-end">
-            <motion.div
+        <div className="fixed inset-0 z-50 bg-white backdrop-blur-md flex justify-end">
+            <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Discovery filters" tabIndex={-1}
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ type: "spring", damping: 26, stiffness: 300 }}
-                className="w-full max-w-md bg-[#0E1424] border-l border-white/[0.08] h-full flex flex-col text-white shadow-2xl relative"
+                className="w-full max-w-md bg-white border-l border-[#e6e1ed] h-full flex flex-col text-[#262131] shadow-sm relative"
             >
                 {/* Header */}
-                <div className="p-4 sm:p-5 border-b border-white/[0.08] flex items-center justify-between bg-[#101623]/80 backdrop-blur-md">
+                <div className="p-4 sm:p-5 border-b border-[#e6e1ed] flex items-center justify-between bg-white backdrop-blur-md">
                     <div className="flex items-center space-x-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                        <div className="w-8 h-8 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-600">
                             <Filter className="w-4 h-4" />
                         </div>
                         <div>
                             <div className="flex items-center space-x-2">
-                                <h3 className="font-bold text-sm tracking-tight text-white">Discovery Filters</h3>
+                                <h3 className="font-bold text-sm tracking-tight text-[#262131]">Discovery Filters</h3>
                                 {activeCount > 0 && (
-                                    <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-bold">
+                                    <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-700 border border-rose-500/30 text-[10px] font-bold">
                                         {activeCount} active
                                     </span>
                                 )}
                             </div>
-                            <p className="text-[11px] text-slate-400">Refine by Sri Lankan province, intent & pace</p>
+                            <p className="text-[11px] text-slate-500">Refine by Sri Lankan province, intent & pace</p>
                         </div>
                     </div>
                     <button
-                        onClick={onClose}
-                        className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white transition cursor-pointer"
-                        aria-label="Close filters"
-                    >
+                        aria-label="Close discovery filters" onClick={onClose}
+                        className="p-2 rounded-xl bg-[#f5f2f8] hover:bg-[#f5f2f8] text-slate-500 hover:text-[#262131] transition cursor-pointer"
+                                >
                         <X className="w-4 h-4" />
                     </button>
                 </div>
@@ -123,8 +126,8 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                     {/* 1. Sri Lankan District */}
                     <div>
                         <div className="flex items-center space-x-1.5 mb-2.5">
-                            <MapPin className="w-3.5 h-3.5 text-rose-400" />
-                            <label className="text-[11px] uppercase font-bold text-slate-300 tracking-wider">
+                            <MapPin className="w-3.5 h-3.5 text-rose-600" />
+                            <label className="text-[11px] uppercase font-bold text-slate-600 tracking-wider">
                                 Sri Lankan District
                             </label>
                         </div>
@@ -139,8 +142,8 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                                         onClick={() => onDistrictChange(dist === "All" ? "all" : dist)}
                                         className={`px-3 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${
                                             isSelected
-                                                ? "bg-rose-500 text-white font-bold shadow-md shadow-rose-950/60 border border-rose-400/40"
-                                                : "bg-white/[0.03] text-slate-300 hover:text-white hover:bg-white/[0.07] border border-white/[0.06]"
+                                                ? "bg-rose-500 mingle-filled text-[#262131] font-bold shadow-md border border-rose-400/40"
+                                                : "bg-[#f5f2f8] text-slate-600 hover:text-[#262131] hover:bg-[#f5f2f8] border border-[#e6e1ed]"
                                         }`}
                                     >
                                         {dist}
@@ -153,8 +156,8 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                     {/* 2. Relationship Intent */}
                     <div>
                         <div className="flex items-center space-x-1.5 mb-2.5">
-                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                            <label className="text-[11px] uppercase font-bold text-slate-300 tracking-wider">
+                            <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+                            <label className="text-[11px] uppercase font-bold text-slate-600 tracking-wider">
                                 Relationship Intention
                             </label>
                         </div>
@@ -167,12 +170,12 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                                         onClick={() => onIntentChange(opt.value)}
                                         className={`w-full p-2.5 sm:p-3 rounded-xl text-xs flex items-center justify-between transition border cursor-pointer ${
                                             isSelected
-                                                ? "bg-amber-500/15 border-amber-500/40 text-amber-200 font-semibold shadow-sm"
-                                                : "bg-white/[0.02] border-white/[0.06] text-slate-300 hover:text-white hover:bg-white/[0.05]"
+                                                ? "bg-amber-500/15 border-amber-500/40 text-amber-800 font-semibold shadow-sm"
+                                                : "bg-[#f5f2f8] border-[#e6e1ed] text-slate-600 hover:text-[#262131] hover:bg-[#f5f2f8]"
                                         }`}
                                     >
                                         <span>{opt.label}</span>
-                                        {isSelected && <Check className="w-4 h-4 text-amber-400 shrink-0" />}
+                                        {isSelected && <Check className="w-4 h-4 text-amber-700 shrink-0" />}
                                     </button>
                                 );
                             })}
@@ -182,8 +185,8 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                     {/* 3. Lifestyle Rhythm & Pace */}
                     <div>
                         <div className="flex items-center space-x-1.5 mb-2.5">
-                            <Compass className="w-3.5 h-3.5 text-sky-400" />
-                            <label className="text-[11px] uppercase font-bold text-slate-300 tracking-wider">
+                            <Compass className="w-3.5 h-3.5 text-sky-700" />
+                            <label className="text-[11px] uppercase font-bold text-slate-600 tracking-wider">
                                 Lifestyle Pace & Rhythm
                             </label>
                         </div>
@@ -196,12 +199,12 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                                         onClick={() => onLifestyleChange(opt.value)}
                                         className={`w-full p-2.5 sm:p-3 rounded-xl text-xs flex items-center justify-between transition border cursor-pointer ${
                                             isSelected
-                                                ? "bg-sky-500/15 border-sky-500/40 text-sky-200 font-semibold shadow-sm"
-                                                : "bg-white/[0.02] border-white/[0.06] text-slate-300 hover:text-white hover:bg-white/[0.05]"
+                                                ? "bg-sky-500/15 border-sky-500/40 text-sky-800 font-semibold shadow-sm"
+                                                : "bg-[#f5f2f8] border-[#e6e1ed] text-slate-600 hover:text-[#262131] hover:bg-[#f5f2f8]"
                                         }`}
                                     >
                                         <span>{opt.label}</span>
-                                        {isSelected && <Check className="w-4 h-4 text-sky-400 shrink-0" />}
+                                        {isSelected && <Check className="w-4 h-4 text-sky-700 shrink-0" />}
                                     </button>
                                 );
                             })}
@@ -210,10 +213,10 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-4 sm:p-5 border-t border-white/[0.08] bg-[#101623]/90 backdrop-blur-md flex items-center space-x-3">
+                <div className="p-4 sm:p-5 border-t border-[#e6e1ed] bg-white backdrop-blur-md flex items-center space-x-3">
                     <button
                         onClick={onResetAll}
-                        className="px-4 py-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white text-xs font-semibold flex items-center space-x-1.5 transition cursor-pointer border border-white/[0.06]"
+                        className="px-4 py-3 rounded-xl bg-[#f5f2f8] hover:bg-[#f5f2f8] text-slate-600 hover:text-[#262131] text-xs font-semibold flex items-center space-x-1.5 transition cursor-pointer border border-[#e6e1ed]"
                     >
                         <RotateCcw className="w-3.5 h-3.5" />
                         <span>Reset</span>
@@ -223,7 +226,7 @@ export const DiscoveryFilterDrawer: React.FC<DiscoveryFilterDrawerProps> = ({
                             onApply();
                             onClose();
                         }}
-                        className="flex-1 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold shadow-lg shadow-rose-950/50 transition cursor-pointer"
+                        className="flex-1 py-3 rounded-xl bg-rose-500 mingle-filled hover:bg-rose-600 mingle-filled text-[#262131] text-xs font-bold shadow-sm transition cursor-pointer"
                     >
                         Apply Filters {activeCount > 0 ? `(${activeCount})` : ""}
                     </button>
