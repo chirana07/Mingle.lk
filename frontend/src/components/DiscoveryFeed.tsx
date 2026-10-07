@@ -200,7 +200,7 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
                 <span className="photo-intent">{p.relationship_intent}</span>
               </button>
               <div className="post-content">
-                <div className="post-actions"><button className={`connect-action ${sent ? "sent" : ""}`} disabled={sent} onClick={() => handleOpenConnect(item)}>{sent ? <Check size={20} /> : <Heart size={20} />}<span>{sent ? "Request sent" : "Connect"}</span></button><button className="story-action" onClick={() => setDetailProfile(item)}><Info size={20} /><span>View profile</span></button><button className="icon-button" onClick={() => handleOpenConnect(item)} disabled={sent} aria-label={`Write a note to ${p.first_name}`}><Send size={21} /></button></div>
+                <div className="post-actions"><button className={`connect-action ${sent ? "sent" : ""}`} disabled={sent} onClick={() => handleOpenConnect(item)}>{sent ? <Check size={20} /> : <Heart size={20} />}<span>{sent ? "Request sent" : "Say Hello"}</span></button><button className="story-action" onClick={() => setDetailProfile(item)}><Info size={20} /><span>View profile</span></button><button className="icon-button" onClick={() => handleOpenConnect(item)} disabled={sent} aria-label={`Write a note to ${p.first_name}`}><Send size={21} /></button></div>
                 {p.bio && <p className="post-bio"><strong>{p.first_name}</strong> {p.bio}</p>}
                 {item.shared_interests.length > 0 && <p className="shared-interests">You both like {item.shared_interests.slice(0, 3).join(" · ")}</p>}
                 {topCard ? <button className="shared-answer" onClick={() => handleOpenConnect(item)} disabled={sent}><span><small>{topCard.is_identical ? "Something in common" : "A conversation starter"}</small><strong>{topCard.question}</strong><span>{topCard.target_choice_label}</span></span><ArrowUpRight size={21} /></button> : item.match_reasons[0] ? <p className="match-reason"><Heart size={16} />{item.match_reasons[0]}</p> : null}
@@ -245,16 +245,26 @@ export const DiscoveryFeed: React.FC<DiscoveryFeedProps> = ({
               </button>
 
               <div className="relative h-72 rounded-2xl overflow-hidden mb-4 bg-[#f4f1f8]">
-                <img
-                  src={
-                    detailProfile.profile.photos[0]?.url ||
-                    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
-                  }
-                  alt={detailProfile.profile.first_name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0E1424] via-transparent to-transparent" />
-                <div className="photo-caption absolute bottom-3.5 left-4">
+                {detailProfile.profile.photos[0]?.url ? (
+                  <img
+                    src={detailProfile.profile.photos[0].url}
+                    alt={detailProfile.profile.first_name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="photo-placeholder">
+                    <UserRound size={64} strokeWidth={1.5} />
+                    <span>No photo added</span>
+                  </div>
+                )}
+                {detailProfile.profile.photos[0]?.url && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0E1424] via-transparent to-transparent" />
+                )}
+                <div
+                  className={`absolute bottom-3.5 left-4 ${
+                    detailProfile.profile.photos[0]?.url ? "photo-caption" : ""
+                  }`}
+                >
                   <h3 className="text-2xl font-bold tracking-tight">
                     {detailProfile.profile.first_name}, {detailProfile.profile.age}
                   </h3>
